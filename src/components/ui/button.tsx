@@ -1,9 +1,13 @@
 "use client";
 
 import { useRef } from "react";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion, useMotionValue, useSpring } from "motion/react";
 import { cn } from "@/lib/cn";
+
+/** In-app hrefs route through Link so they don't reload the page; "#..." stays a plain anchor. */
+const MotionLink = motion.create(Link);
 
 type Props = {
   href: string;
@@ -33,8 +37,10 @@ export function Button({ href, children, variant = "primary", size = "md", class
     y.set(0);
   };
 
+  const Anchor = href.startsWith("/") ? MotionLink : motion.a;
+
   return (
-    <motion.a
+    <Anchor
       ref={ref}
       href={href}
       onPointerMove={onMove}
@@ -56,6 +62,6 @@ export function Button({ href, children, variant = "primary", size = "md", class
           className="relative size-4 transition-transform duration-300 ease-out-expo group-hover:translate-x-0.5"
         />
       )}
-    </motion.a>
+    </Anchor>
   );
 }

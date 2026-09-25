@@ -19,8 +19,10 @@ export const nav = {
 export const hero = {
   title: "Bangladesh's robotics revolution starts in one room.",
   sub: "Pick up a kit. Make something move in four sessions. Spend nine months turning that first spark into a portfolio.",
-  primary: { label: "Get your kit", href: "#kit" },
-  secondary: { label: "Find an Inspire Session", href: "#join" },
+  primary: { label: "Join Builder'sCell", href: "/signup" },
+  /** Swapped in for members, who have no use for the sign-up form. */
+  primaryMember: { label: "Your profile", href: "/profile" },
+  secondary: { label: "Get your kit", href: "#kit" },
   hint: "Click the robot to say hi",
   /** What the hero robot says for each gesture. */
   robotLines: {

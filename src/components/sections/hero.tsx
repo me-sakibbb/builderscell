@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { ChevronDown } from "lucide-react";
 import { hero } from "@/content/site";
 import { Button } from "@/components/ui/button";
+import { useUser } from "@/hooks/use-user";
 import { Scene } from "@/components/three";
 import { createHeroState, robotBus, type Gesture } from "@/components/three/bus";
 import { gsap, MOTION_OK, ScrollTrigger, useGSAP } from "@/lib/gsap";
@@ -54,6 +55,7 @@ function SpeechBubble() {
 export function Hero() {
   const root = useRef<HTMLElement>(null);
   const state = useRef(createHeroState());
+  const { user } = useUser();
 
   useGSAP(
     () => {
@@ -100,6 +102,9 @@ export function Hero() {
   );
 
   const words = hero.title.split(" ");
+  // Until the session resolves, show the sign-up label: /signup redirects members to their
+  // profile anyway, so the button is never a dead end while it settles.
+  const primary = user ? hero.primaryMember : hero.primary;
 
   return (
     // z-[6] lifts the hero (and its copy) above the shared 3D canvas at z-5. The
@@ -137,8 +142,8 @@ export function Hero() {
           <div className="pointer-events-auto mt-7 max-w-md">
             <p className="hero-fade text-lg leading-relaxed text-muted text-pretty">{hero.sub}</p>
             <div className="hero-fade mt-7 flex flex-wrap gap-3">
-              <Button href={hero.primary.href} size="lg">
-                {hero.primary.label}
+              <Button href={primary.href} size="lg">
+                {primary.label}
               </Button>
               <Button href={hero.secondary.href} size="lg" variant="ghost" arrow={false}>
                 {hero.secondary.label}

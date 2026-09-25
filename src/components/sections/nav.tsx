@@ -7,6 +7,8 @@ import { nav } from "@/content/site";
 import { Wordmark } from "@/components/ui/wordmark";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Button } from "@/components/ui/button";
+import { AccountButton } from "@/components/auth/account-button";
+import { useUser } from "@/hooks/use-user";
 import { useLenis } from "@/components/smooth-scroll";
 import { cn } from "@/lib/cn";
 
@@ -15,6 +17,7 @@ export function Nav() {
   const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
   const lenis = useLenis();
+  const { user } = useUser();
 
   useEffect(() => {
     let last = window.scrollY;
@@ -70,6 +73,9 @@ export function Nav() {
             ))}
           </ul>
           <div className="flex items-center gap-2">
+            <span className="hidden sm:block">
+              <AccountButton />
+            </span>
             <ThemeToggle />
             <span className="hidden sm:block">
               <Button href={nav.cta.href} arrow={false}>
@@ -101,7 +107,7 @@ export function Nav() {
             className="fixed inset-0 z-40 flex flex-col justify-end bg-bg px-6 pb-10 blueprint lg:hidden"
           >
             <ul className="space-y-1">
-              {[...nav.links, nav.cta].map((l, i) => (
+              {[...nav.links, nav.cta, user ? { label: "Your profile", href: "/profile" } : { label: "Sign in", href: "/login" }].map((l, i) => (
                 <motion.li
                   key={l.href + l.label}
                   initial={{ y: 40, opacity: 0 }}

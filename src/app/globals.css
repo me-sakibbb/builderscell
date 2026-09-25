@@ -19,6 +19,11 @@
   --signal: #e0233a;
   --glow: rgb(0 184 107 / 0.22);
   --grid: rgb(10 12 14 / 0.06);
+  /* Google's brand mark: fixed values, identical in both themes */
+  --google-blue: #4285f4;
+  --google-green: #34a853;
+  --google-yellow: #fbbc05;
+  --google-red: #ea4335;
   color-scheme: light;
 }
 
