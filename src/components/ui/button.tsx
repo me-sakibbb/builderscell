@@ -1,13 +1,6 @@
-"use client";
-
-import { useRef } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { motion, useMotionValue, useSpring } from "motion/react";
 import { cn } from "@/lib/cn";
-
-/** In-app hrefs route through Link so they don't reload the page; "#..." stays a plain anchor. */
-const MotionLink = motion.create(Link);
 
 type Props = {
   href: string;
@@ -18,36 +11,16 @@ type Props = {
   arrow?: boolean;
 };
 
-/** Link-button that leans toward the pointer. */
+/** Link-button; in-app hrefs route through Link so they don't reload the page, "#..." stays a plain anchor. */
 export function Button({ href, children, variant = "primary", size = "md", className, arrow = true }: Props) {
-  const ref = useRef<HTMLAnchorElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const sx = useSpring(x, { stiffness: 300, damping: 20, mass: 0.4 });
-  const sy = useSpring(y, { stiffness: 300, damping: 20, mass: 0.4 });
-
-  const onMove = (e: React.PointerEvent) => {
-    if (e.pointerType !== "mouse" || !ref.current) return;
-    const r = ref.current.getBoundingClientRect();
-    x.set((e.clientX - r.left - r.width / 2) * 0.18);
-    y.set((e.clientY - r.top - r.height / 2) * 0.28);
-  };
-  const reset = () => {
-    x.set(0);
-    y.set(0);
-  };
-
-  const Anchor = href.startsWith("/") ? MotionLink : motion.a;
+  const Anchor = href.startsWith("/") ? Link : "a";
 
   return (
     <Anchor
-      ref={ref}
       href={href}
-      onPointerMove={onMove}
-      onPointerLeave={reset}
-      style={{ x: sx, y: sy }}
       className={cn(
-        "group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full font-medium whitespace-nowrap transition-colors duration-300",
+        "group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full font-medium whitespace-nowrap",
+        "transition-[color,background-color,border-color,opacity] duration-300 ease-out-expo active:opacity-90",
         size === "lg" ? "h-13 px-7 text-base" : "h-11 px-5 text-sm",
         variant === "primary"
           ? "bg-fg text-bg hover:bg-accent hover:text-accent-fg"

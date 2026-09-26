@@ -59,7 +59,7 @@ export function Bootcamp() {
               >
                 <span className="size-2 rounded-full bg-line-strong transition-colors duration-500 group-data-[on]:bg-accent" />
               </span>
-              <p className="font-mono text-xs tracking-widest text-muted uppercase transition-colors duration-500 group-data-[on]:text-accent-ink">
+              <p className="label text-muted transition-colors duration-500 group-data-[on]:text-accent-ink">
                 {s.tag}
               </p>
               <h3 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">{s.title}</h3>

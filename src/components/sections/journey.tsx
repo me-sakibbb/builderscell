@@ -66,7 +66,7 @@ export function Journey() {
           <h2 className="display text-[clamp(2.6rem,5.8vw,5.4rem)] text-balance">
             <SplitWords text={journey.title} />
           </h2>
-          <p className="mt-6 hidden font-mono text-xs text-muted md:block">Keep scrolling →</p>
+          <p className="mt-6 hidden text-xs text-muted md:block">Keep scrolling →</p>
         </div>
 
         {journey.steps.map((s, i) => {
@@ -91,7 +91,7 @@ export function Journey() {
                     style={{ color: "color-mix(in oklab, var(--accent-ink) calc(var(--on) * 100%), var(--muted))" }}
                   />
                 </span>
-                <span className="font-mono text-sm text-muted">{s.tag}</span>
+                <span className="label text-muted">{s.tag}</span>
                 {!last && (
                   <span aria-hidden className="absolute top-1/2 left-14 hidden h-px w-[calc(30vw-3.5rem)] bg-line-strong md:block">
                     <span

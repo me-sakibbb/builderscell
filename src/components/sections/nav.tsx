@@ -107,7 +107,7 @@ export function Nav() {
             className="fixed inset-0 z-40 flex flex-col justify-end bg-bg px-6 pb-10 blueprint lg:hidden"
           >
             <ul className="space-y-1">
-              {[...nav.links, nav.cta, user ? { label: "Your profile", href: "/profile" } : { label: "Sign in", href: "/login" }].map((l, i) => (
+              {[...nav.links, nav.cta, user ? { label: "Your dashboard", href: "/dashboard" } : { label: "Sign in", href: "/login" }].map((l, i) => (
                 <motion.li
                   key={l.href + l.label}
                   initial={{ y: 40, opacity: 0 }}

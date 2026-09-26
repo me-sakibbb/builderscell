@@ -59,7 +59,7 @@
   --color-accent-fg: var(--accent-fg);
   --color-signal: var(--signal);
   --font-sans: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -132,6 +132,27 @@ html.theme-transition *::after {
   font-weight: 600;
   letter-spacing: -0.035em;
   line-height: 0.98;
+}
+
+/* Micro-label above a block of content. Sans, not mono: the monospace face is kept
+   for codes, IDs and figures only. Pair with a text-* colour utility. */
+@utility label {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* The same label one notch down, for use inside cards and table rows. */
+@utility label-xs {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  line-height: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 @utility blueprint {

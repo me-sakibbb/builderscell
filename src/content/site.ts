@@ -8,12 +8,13 @@
 export const nav = {
   links: [
     { label: "Bootcamp", href: "#bootcamp" },
+    { label: "Campaigns", href: "/campaigns" },
     { label: "The Cell", href: "#cell" },
     { label: "Shop", href: "#shop" },
     { label: "Mentors", href: "#mentors" },
     { label: "For Teams", href: "#teams" },
   ],
-  cta: { label: "Get your kit", href: "#kit" },
+  cta: { label: "Register", href: "/campaigns" },
 };
 
 export const hero = {
@@ -21,7 +22,7 @@ export const hero = {
   sub: "Pick up a kit. Make something move in four sessions. Spend nine months turning that first spark into a portfolio.",
   primary: { label: "Join Builder'sCell", href: "/signup" },
   /** Swapped in for members, who have no use for the sign-up form. */
-  primaryMember: { label: "Your profile", href: "/profile" },
+  primaryMember: { label: "Your dashboard", href: "/dashboard" },
   secondary: { label: "Get your kit", href: "#kit" },
   hint: "Click the robot to say hi",
   /** What the hero robot says for each gesture. */
@@ -121,12 +122,12 @@ export const kit = {
     { id: "power", name: "Battery pack", spec: "2 × cells + holder" },
     { id: "wires", name: "Jumper wires", spec: "M–M · M–F · 40 pcs" },
   ],
-  // DUMMY prices (BDT)
+  // Bootcamp registration fees (BDT). The campaign row in the database is the source of truth.
   plans: [
-    { id: "single", label: "Single", sub: "Build it solo", price: 4500, per: "one kit" },
-    { id: "group", label: "Group of 3", sub: "Split it with friends", price: 10500, per: "৳3,500 each" },
+    { id: "single", label: "Individual", sub: "Build it solo", price: 5000, per: "one Build Box" },
+    { id: "group", label: "Team of 3", sub: "Split it with friends", price: 7500, per: "৳2,500 each" },
   ],
-  cta: { label: "Reserve your kit", href: "#join" },
+  cta: { label: "Register now", href: "/campaigns/builders-bootcamp" },
 };
 
 export const playground = {

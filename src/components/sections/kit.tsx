@@ -127,8 +127,8 @@ export function Kit() {
           </div>
           <div className="mt-6 flex flex-wrap items-center gap-4">
             <Button href={kit.cta.href}>{kit.cta.label}</Button>
-            <span className="font-mono text-[11px] text-muted">
-              {active.sub} · {kit.note} Prices are placeholders.
+            <span className="text-xs text-muted">
+              {active.sub} · {kit.note}
             </span>
           </div>
         </div>

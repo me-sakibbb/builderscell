@@ -194,7 +194,7 @@ export function Curriculum() {
                 <article className="grid origin-top overflow-hidden rounded-[2rem] hairline bg-surface shadow-[0_-20px_60px_-30px_rgb(0_0_0/0.35)] md:grid-cols-[1.1fr_1fr]">
                   <div className="flex flex-col justify-between gap-10 p-8 sm:p-12">
                     <div className="flex items-center justify-between">
-                      <span className="font-mono text-xs tracking-widest text-accent-ink uppercase">{p.tag}</span>
+                      <span className="label text-accent-ink">{p.tag}</span>
                       <span className="font-mono text-xs text-muted">
                         {String(i + 1).padStart(2, "0")} / {String(curriculum.phases.length).padStart(2, "0")}
                       </span>

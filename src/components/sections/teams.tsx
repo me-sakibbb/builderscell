@@ -64,12 +64,12 @@ export function Teams() {
           <div data-reveal className="mt-10 w-full max-w-md rounded-3xl border border-white/15 bg-white/10 p-6 backdrop-blur-xl">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="font-mono text-xs tracking-widest text-white/60 uppercase">Hourly access</p>
+                <p className="label text-white/60">Hourly access</p>
                 <p className="mt-2 font-mono text-4xl font-medium tracking-tight">
                   {bdt(teams.rate)}
                   <span className="ml-2 text-sm text-white/60">{teams.unit}</span>
                 </p>
-                <p className="mt-1 font-mono text-[11px] text-white/50">Placeholder rate</p>
+                <p className="mt-1 text-xs text-white/50">Placeholder rate</p>
               </div>
               <span className="grid size-11 place-items-center rounded-full border border-white/20">
                 <Clock className="size-5" />

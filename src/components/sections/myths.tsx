@@ -29,14 +29,14 @@ function FlipCard({ card, index }: { card: (typeof myths.cards)[number]; index: 
       >
         {/* front: the myth */}
         <div className="absolute inset-0 flex flex-col justify-between overflow-hidden rounded-3xl hairline bg-surface p-7 [backface-visibility:hidden]">
-          <div className="flex items-center justify-between font-mono text-xs text-muted">
-            <span>MYTH_0{index + 1}</span>
-            <span className="flex items-center gap-1.5 text-signal">
+          <div className="flex items-center justify-between text-xs text-muted">
+            <span className="font-mono">MYTH_0{index + 1}</span>
+            <span className="flex items-center gap-1.5 font-mono text-signal">
               <span className="size-1.5 rounded-full bg-signal" /> false
             </span>
           </div>
           <p className="text-[1.9rem] leading-[1.1] font-semibold tracking-tight text-balance">{card.myth}</p>
-          <span className="flex items-center gap-2 font-mono text-xs text-muted">
+          <span className="flex items-center gap-2 text-xs text-muted">
             <RotateCcw className="size-3.5" /> Hover or tap for the truth
           </span>
         </div>

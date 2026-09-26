@@ -1,7 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
-const PROTECTED = ["/profile", "/onboarding"];
+const PROTECTED = ["/dashboard", "/profile", "/onboarding", "/admin"];
+
+/** Campaign pages are public; their registration form is not. */
+const PROTECTED_PATTERNS = [/^\/campaigns\/[^/]+\/register\/?$/];
+
+const isProtected = (pathname: string) =>
+  PROTECTED.some((p) => pathname.startsWith(p)) || PROTECTED_PATTERNS.some((p) => p.test(pathname));
 
 /**
  * Keeps the Supabase session cookie fresh on every navigation and bounces signed-out
@@ -32,16 +38,16 @@ export async function proxy(request: NextRequest) {
   const { data } = await supabase.auth.getClaims();
   const { pathname } = request.nextUrl;
 
-  if (!data?.claims && PROTECTED.some((p) => pathname.startsWith(p))) {
+  if (!data?.claims && isProtected(pathname)) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
-    url.search = pathname === "/profile" ? "" : `?next=${encodeURIComponent(pathname)}`;
+    url.search = pathname === "/dashboard" ? "" : `?next=${encodeURIComponent(pathname)}`;
     return NextResponse.redirect(url);
   }
 
   if (data?.claims && (pathname === "/login" || pathname === "/signup")) {
     const url = request.nextUrl.clone();
-    url.pathname = "/profile";
+    url.pathname = "/dashboard";
     url.search = "";
     return NextResponse.redirect(url);
   }

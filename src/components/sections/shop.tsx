@@ -49,7 +49,7 @@ export function Shop() {
         <SectionHeading eyebrow={shop.eyebrow} title={shop.title} body={shop.body} titleClassName="max-w-[16ch]" />
         <div data-reveal className="flex flex-col items-start gap-3">
           <Button href={shop.cta.href}>{shop.cta.label}</Button>
-          <span className="font-mono text-[11px] text-muted">{shop.note}</span>
+          <span className="text-xs text-muted">{shop.note}</span>
         </div>
       </div>
 
@@ -79,7 +79,7 @@ export function Shop() {
                     <Icon className="size-10 text-accent-ink" strokeWidth={1.4} />
                   </div>
                 </div>
-                <span className="absolute top-3 left-3 rounded-full glass hairline px-2.5 py-1 font-mono text-[10px] tracking-wider uppercase">
+                <span className="absolute top-3 left-3 rounded-full glass hairline px-2.5 py-1 label-xs">
                   {p.cat}
                 </span>
                 <span className="absolute top-3 right-3 font-mono text-[10px] text-muted">

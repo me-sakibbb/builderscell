@@ -97,7 +97,7 @@ export async function completeOnboarding(_prev: OnboardingState, formData: FormD
     return { error: error.message };
   }
 
-  revalidatePath("/profile");
+  revalidatePath("/", "layout");
   redirect(nextFrom(formData.get("next")));
 }
 

@@ -47,7 +47,7 @@ function Certificate() {
             <span className="font-mono text-[clamp(0.5rem,1vw,0.7rem)] tracking-widest text-muted uppercase">No. BC-2026-0001</span>
           </div>
           <div>
-            <p className="font-mono text-[clamp(0.55rem,1vw,0.75rem)] tracking-[0.25em] text-accent-ink uppercase">
+            <p className="text-[clamp(0.55rem,1vw,0.75rem)] font-semibold tracking-[0.25em] text-accent-ink uppercase">
               Certificate of completion
             </p>
             <p className="mt-2 text-[clamp(1.4rem,3.4vw,2.6rem)] leading-none font-semibold tracking-tight">Your name here</p>

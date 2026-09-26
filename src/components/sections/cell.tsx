@@ -70,7 +70,7 @@ export function Cell() {
                 <Image src={img.src} alt={img.alt} fill sizes="(min-width: 1024px) 40vw, 80vw" className="object-cover" />
               </div>
             ))}
-            <div className="plx absolute right-[6%] bottom-[12%] z-10 rounded-2xl glass hairline px-4 py-3 font-mono text-xs" data-speed={-60}>
+            <div className="plx absolute right-[6%] bottom-[12%] z-10 rounded-2xl glass hairline px-4 py-3 text-xs font-medium" data-speed={-60}>
               <span className="mr-2 inline-block size-1.5 rounded-full bg-accent led-pulse" />
               {cell.badge}
             </div>
@@ -80,7 +80,7 @@ export function Cell() {
             <dl className="specs divide-y divide-line border-y border-line">
               {cell.specs.map((s) => (
                 <div key={s.k} className="spec-row grid grid-cols-[9rem_1fr] gap-4 py-5 sm:grid-cols-[11rem_1fr]">
-                  <dt className="font-mono text-xs tracking-widest text-muted uppercase">{s.k}</dt>
+                  <dt className="label text-muted">{s.k}</dt>
                   <dd className="text-lg leading-snug">{s.v}</dd>
                 </div>
               ))}

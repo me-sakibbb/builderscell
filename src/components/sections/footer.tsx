@@ -12,7 +12,7 @@ export function Footer() {
           </div>
           {footer.columns.map((c) => (
             <div key={c.title}>
-              <h3 className="mb-4 font-mono text-xs tracking-widest text-muted uppercase">{c.title}</h3>
+              <h3 className="mb-4 label text-muted">{c.title}</h3>
               <ul className="space-y-2">
                 {c.items.map((i) => (
                   <li key={i.label}>
@@ -27,7 +27,7 @@ export function Footer() {
         </div>
 
         <details className="group mt-16 border-t border-line py-6">
-          <summary className="flex cursor-pointer list-none items-center justify-between font-mono text-xs tracking-widest text-muted uppercase">
+          <summary className="flex cursor-pointer list-none items-center justify-between label text-muted">
             Asset credits
             <span className="transition-transform group-open:rotate-45">+</span>
           </summary>
@@ -43,7 +43,7 @@ export function Footer() {
           </ul>
         </details>
 
-        <div className="flex flex-wrap items-center justify-between gap-4 border-t border-line py-6 font-mono text-xs text-muted">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-t border-line py-6 text-xs text-muted">
           <span>© {new Date().getFullYear()} Builder&apos;s Cell</span>
           <span>Made in Bangladesh</span>
         </div>

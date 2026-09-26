@@ -171,7 +171,7 @@ export function Hero() {
           </div>
           <a
             href="#numbers"
-            className="ml-auto flex items-center gap-2 font-mono text-xs tracking-widest text-muted uppercase"
+            className="ml-auto flex items-center gap-2 label text-muted"
           >
             Scroll
             <ChevronDown className="size-4 animate-bounce" />

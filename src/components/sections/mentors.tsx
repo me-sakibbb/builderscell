@@ -72,7 +72,7 @@ export function Mentors() {
                           </span>
                         ))}
                       </div>
-                      <span className="font-mono text-[11px] text-muted">{mentors.pending}</span>
+                      <span className="text-xs text-muted">{mentors.pending}</span>
                     </div>
                   </div>
                 </TiltCard>

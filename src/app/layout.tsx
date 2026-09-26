@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter_Tight, JetBrains_Mono } from "next/font/google";
+import { IBM_Plex_Mono, Inter_Tight } from "next/font/google";
 import { Providers } from "@/components/providers";
 import "./globals.css";
 
@@ -9,9 +9,11 @@ const interTight = Inter_Tight({
   display: "swap",
 });
 
-const jetbrains = JetBrains_Mono({
-  variable: "--font-jetbrains",
+/** Reserved for codes, IDs and figures - never for body copy or labels. */
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
   display: "swap",
 });
 
@@ -33,7 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${interTight.variable} ${jetbrains.variable} antialiased`}
+      className={`${interTight.variable} ${plexMono.variable} antialiased`}
     >
       <body className="grain">
         <Providers>{children}</Providers>

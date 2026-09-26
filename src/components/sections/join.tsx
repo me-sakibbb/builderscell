@@ -61,8 +61,8 @@ export function Join() {
 
         <div data-reveal className="mx-auto mt-24 max-w-3xl text-left">
           <div className="mb-4 flex items-baseline justify-between">
-            <h3 className="font-mono text-xs tracking-widest text-muted uppercase">Upcoming Inspire Sessions</h3>
-            <span className="font-mono text-[11px] text-muted">Dates are placeholders</span>
+            <h3 className="label text-muted">Upcoming Inspire Sessions</h3>
+            <span className="text-xs text-muted">Dates are placeholders</span>
           </div>
           <ul className="divide-y divide-line border-y border-line">
             {join.sessions.map((s) => (
@@ -71,7 +71,7 @@ export function Join() {
                   href="#"
                   className="group grid grid-cols-[5.5rem_1fr_auto] items-center gap-4 py-5 transition-colors hover:text-accent-ink sm:grid-cols-[7rem_1fr_1fr_auto]"
                 >
-                  <span className="font-mono text-sm">{fmt.format(new Date(s.date))}</span>
+                  <span className="font-mono text-sm tabular-nums">{fmt.format(new Date(s.date))}</span>
                   <span className="text-xl font-medium tracking-tight">{s.city}</span>
                   <span className="hidden text-muted sm:block">{s.venue}</span>
                   <ArrowUpRight className="size-5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

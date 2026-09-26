@@ -15,7 +15,7 @@ function GoogleMark() {
   );
 }
 
-export function GoogleButton({ next = "/profile", label = "Continue with Google" }: { next?: string; label?: string }) {
+export function GoogleButton({ next = "/dashboard", label = "Continue with Google" }: { next?: string; label?: string }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

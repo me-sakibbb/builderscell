@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Check, ChevronDown, Loader2, Search, X } from "lucide-react";
+import { Check, ChevronDown, Loader2, Lock, Search, X } from "lucide-react";
 import { useInstitutionSearch, type Institution } from "@/hooks/use-institution-search";
 import { INSTITUTION_TYPE_LABEL } from "@/lib/validation/profile";
 import { inputClass } from "@/components/ui/field";
@@ -12,17 +12,41 @@ const meta = (row: Institution) =>
     .filter(Boolean)
     .join(" · ");
 
+export type InstitutionValue = {
+  institutionId: string | null;
+  institutionOther: string;
+  institutionName: string;
+};
+
+type Props = {
+  error?: string;
+  describedBy?: string;
+  id?: string;
+  /** Controlled mode. Without it the picker posts `institutionId` / `institutionOther` itself. */
+  value?: InstitutionValue;
+  onChange?: (value: InstitutionValue) => void;
+  /** Read-only, for a participant whose institution comes from their own profile. */
+  locked?: boolean;
+};
+
 /** Searchable picker over the institutions catalogue, with a free-text escape hatch. */
-export function InstitutionSelect({ error, describedBy }: { error?: string; describedBy?: string }) {
+export function InstitutionSelect({ error, describedBy, id = "institution", value, onChange, locked }: Props) {
   const { query, search, items, loading, loadingMore, hasMore, error: searchError, loadMore } = useInstitutionSearch();
 
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
   const [selected, setSelected] = useState<Institution | null>(null);
-  const [other, setOther] = useState(false);
+  const [otherMode, setOtherMode] = useState(false);
 
   const root = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLInputElement>(null);
+
+  const controlled = Boolean(onChange);
+  const chosenName = controlled ? (value?.institutionId ? value.institutionName : "") : (selected?.name ?? "");
+  const chosenMeta = controlled ? "" : selected ? meta(selected) : "";
+  const other = controlled
+    ? otherMode || (!value?.institutionId && Boolean(value?.institutionOther?.trim()))
+    : otherMode;
 
   useEffect(() => {
     const onPointerDown = (e: PointerEvent) => {
@@ -32,31 +56,59 @@ export function InstitutionSelect({ error, describedBy }: { error?: string; desc
     return () => document.removeEventListener("pointerdown", onPointerDown);
   }, []);
 
+  const emit = (next: InstitutionValue) => onChange?.(next);
+
   const choose = (row: Institution) => {
-    setSelected(row);
+    if (controlled) emit({ institutionId: row.id, institutionOther: "", institutionName: row.name });
+    else setSelected(row);
     setOpen(false);
     search("");
   };
 
+  const clear = () => {
+    if (controlled) emit({ institutionId: null, institutionOther: "", institutionName: "" });
+    else setSelected(null);
+    setOpen(true);
+    window.setTimeout(() => input.current?.focus(), 0);
+  };
+
+  if (locked) {
+    return (
+      <div className={cn(inputClass, "flex items-center gap-3 py-0 opacity-90")}>
+        <Lock aria-hidden className="size-4 shrink-0 text-muted" />
+        <span className="min-w-0 truncate">{chosenName || value?.institutionOther || "—"}</span>
+      </div>
+    );
+  }
+
   if (other) {
     return (
       <div className="space-y-2">
-        <input type="hidden" name="institutionId" value="" />
+        {!controlled && <input type="hidden" name="institutionId" value="" />}
         <input
-          id="institution"
-          name="institutionOther"
+          id={id}
+          name={controlled ? undefined : "institutionOther"}
           type="text"
           required
-          autoFocus
           maxLength={120}
-          placeholder="Type your institution's full name"
+          placeholder="Type the institution's full name"
+          value={controlled ? (value?.institutionOther ?? "") : undefined}
+          onChange={
+            controlled
+              ? (e) => emit({ institutionId: null, institutionOther: e.target.value, institutionName: "" })
+              : undefined
+          }
           aria-invalid={Boolean(error)}
           aria-describedby={describedBy}
           className={inputClass}
         />
         <button
           type="button"
-          onClick={() => setOther(false)}
+          onClick={() => {
+            if (controlled) emit({ institutionId: null, institutionOther: "", institutionName: "" });
+            setOtherMode(false);
+            setOpen(true);
+          }}
           className="text-sm text-muted underline-offset-4 transition-colors hover:text-fg hover:underline"
         >
           Search the list instead
@@ -65,24 +117,26 @@ export function InstitutionSelect({ error, describedBy }: { error?: string; desc
     );
   }
 
+  const hasSelection = controlled ? Boolean(value?.institutionId) : Boolean(selected);
+
   return (
     <div ref={root} className="relative">
-      <input type="hidden" name="institutionId" value={selected?.id ?? ""} />
-      <input type="hidden" name="institutionOther" value="" />
+      {!controlled && (
+        <>
+          <input type="hidden" name="institutionId" value={selected?.id ?? ""} />
+          <input type="hidden" name="institutionOther" value="" />
+        </>
+      )}
 
-      {selected ? (
+      {hasSelection ? (
         <div className={cn(inputClass, "flex items-center justify-between gap-3 py-0")}>
           <span className="min-w-0">
-            <span className="block truncate text-base">{selected.name}</span>
-            <span className="block truncate font-mono text-[11px] text-muted">{meta(selected)}</span>
+            <span className="block truncate text-base">{chosenName}</span>
+            {chosenMeta && <span className="block truncate font-mono text-[11px] text-muted">{chosenMeta}</span>}
           </span>
           <button
             type="button"
-            onClick={() => {
-              setSelected(null);
-              setOpen(true);
-              window.setTimeout(() => input.current?.focus(), 0);
-            }}
+            onClick={clear}
             aria-label="Change institution"
             className="grid size-8 shrink-0 place-items-center rounded-full text-muted transition-colors hover:bg-bg-elev hover:text-fg"
           >
@@ -94,11 +148,11 @@ export function InstitutionSelect({ error, describedBy }: { error?: string; desc
           <Search aria-hidden className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-muted" />
           <input
             ref={input}
-            id="institution"
+            id={id}
             type="text"
             role="combobox"
             aria-expanded={open}
-            aria-controls="institution-list"
+            aria-controls={`${id}-list`}
             aria-autocomplete="list"
             aria-busy={loading}
             aria-invalid={Boolean(error)}
@@ -138,9 +192,9 @@ export function InstitutionSelect({ error, describedBy }: { error?: string; desc
         </div>
       )}
 
-      {open && !selected && (
+      {open && !hasSelection && (
         <div
-          id="institution-list"
+          id={`${id}-list`}
           role="listbox"
           data-lenis-prevent
           className="absolute z-20 mt-2 max-h-72 w-full overflow-y-auto rounded-xl hairline bg-bg-elev p-1 shadow-[0_20px_60px_-20px_rgb(0_0_0/0.45)]"
@@ -195,7 +249,7 @@ export function InstitutionSelect({ error, describedBy }: { error?: string; desc
           <button
             type="button"
             onClick={() => {
-              setOther(true);
+              setOtherMode(true);
               setOpen(false);
             }}
             className="mt-1 w-full border-t border-line px-3 py-2.5 text-left text-sm text-muted transition-colors hover:text-fg"

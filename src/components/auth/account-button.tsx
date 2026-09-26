@@ -26,9 +26,9 @@ export function AccountButton({ className }: { className?: string }) {
 
   return (
     <Link
-      href="/profile"
-      aria-label="Your profile"
-      title={user.email ?? "Your profile"}
+      href="/dashboard"
+      aria-label="Your dashboard"
+      title={user.email ?? "Your dashboard"}
       className={cn(
         "grid size-10 shrink-0 place-items-center rounded-full bg-accent text-xs font-semibold text-accent-fg transition-transform hover:scale-105",
         className,
