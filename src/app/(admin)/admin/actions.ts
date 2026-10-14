@@ -26,6 +26,7 @@ export async function reviewRegistrationAction(_prev: ReviewState, formData: For
   const { error } = await reviewRegistration(registrationId, action, note);
   if (error) return { error: submitErrorMessage(error) };
 
+  revalidatePath("/admin");
   revalidatePath("/admin/registrations");
   revalidatePath(`/admin/registrations/${registrationId}`);
   revalidatePath("/dashboard", "layout");

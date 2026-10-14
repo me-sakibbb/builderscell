@@ -12,7 +12,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
+    PostgrestVersion: "14.17"
   }
   public: {
     Tables: {
@@ -71,6 +71,7 @@ export type Database = {
           slug: string
           starts_on?: string | null
           status?: string
+          status_rank?: number | null
           summary: string
           team_fee_bdt?: number | null
           team_max_members?: number
@@ -101,11 +102,114 @@ export type Database = {
           slug?: string
           starts_on?: string | null
           status?: string
+          status_rank?: number | null
           summary?: string
           team_fee_bdt?: number | null
           team_max_members?: number
           team_min_members?: number
           title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      coupon_campaigns: {
+        Row: {
+          campaign_id: string
+          coupon_id: string
+        }
+        Insert: {
+          campaign_id: string
+          coupon_id: string
+        }
+        Update: {
+          campaign_id?: string
+          coupon_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coupon_campaigns_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coupon_campaigns_coupon_id_fkey"
+            columns: ["coupon_id"]
+            isOneToOne: false
+            referencedRelation: "coupons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coupons: {
+        Row: {
+          all_campaigns: boolean
+          applies_to_individual: boolean
+          applies_to_team: boolean
+          code: string
+          created_at: string
+          created_by: string | null
+          discount_type: string
+          display_enabled: boolean
+          display_message: string | null
+          display_show_code: boolean
+          ends_at: string | null
+          id: string
+          individual_value_bdt: number | null
+          is_active: boolean
+          label: string | null
+          max_discount_bdt: number | null
+          max_redemptions: number | null
+          percent_off: number | null
+          starts_at: string | null
+          team_value_bdt: number | null
+          updated_at: string
+        }
+        Insert: {
+          all_campaigns?: boolean
+          applies_to_individual?: boolean
+          applies_to_team?: boolean
+          code: string
+          created_at?: string
+          created_by?: string | null
+          discount_type: string
+          display_enabled?: boolean
+          display_message?: string | null
+          display_show_code?: boolean
+          ends_at?: string | null
+          id?: string
+          individual_value_bdt?: number | null
+          is_active?: boolean
+          label?: string | null
+          max_discount_bdt?: number | null
+          max_redemptions?: number | null
+          percent_off?: number | null
+          starts_at?: string | null
+          team_value_bdt?: number | null
+          updated_at?: string
+        }
+        Update: {
+          all_campaigns?: boolean
+          applies_to_individual?: boolean
+          applies_to_team?: boolean
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          discount_type?: string
+          display_enabled?: boolean
+          display_message?: string | null
+          display_show_code?: boolean
+          ends_at?: string | null
+          id?: string
+          individual_value_bdt?: number | null
+          is_active?: boolean
+          label?: string | null
+          max_discount_bdt?: number | null
+          max_redemptions?: number | null
+          percent_off?: number | null
+          starts_at?: string | null
+          team_value_bdt?: number | null
           updated_at?: string
         }
         Relationships: []
@@ -304,13 +408,17 @@ export type Database = {
       registrations: {
         Row: {
           campaign_id: string
+          coupon_code: string | null
+          coupon_id: string | null
           created_at: string
+          discount_bdt: number | null
           draft: Json
           fee_bdt: number | null
           heard_from: string | null
           heard_from_other: string | null
           id: string
           member_count: number | null
+          original_fee_bdt: number | null
           payment_method: string | null
           review_note: string | null
           reviewed_at: string | null
@@ -325,13 +433,17 @@ export type Database = {
         }
         Insert: {
           campaign_id: string
+          coupon_code?: string | null
+          coupon_id?: string | null
           created_at?: string
+          discount_bdt?: number | null
           draft?: Json
           fee_bdt?: number | null
           heard_from?: string | null
           heard_from_other?: string | null
           id?: string
           member_count?: number | null
+          original_fee_bdt?: number | null
           payment_method?: string | null
           review_note?: string | null
           reviewed_at?: string | null
@@ -346,13 +458,17 @@ export type Database = {
         }
         Update: {
           campaign_id?: string
+          coupon_code?: string | null
+          coupon_id?: string | null
           created_at?: string
+          discount_bdt?: number | null
           draft?: Json
           fee_bdt?: number | null
           heard_from?: string | null
           heard_from_other?: string | null
           id?: string
           member_count?: number | null
+          original_fee_bdt?: number | null
           payment_method?: string | null
           review_note?: string | null
           reviewed_at?: string | null
@@ -373,6 +489,13 @@ export type Database = {
             referencedRelation: "campaigns"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "registrations_coupon_id_fkey"
+            columns: ["coupon_id"]
+            isOneToOne: false
+            referencedRelation: "coupons"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
@@ -380,9 +503,50 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_campaign_overview: {
+        Args: { p_limit?: number; p_offset?: number }
+        Returns: {
+          approved: number
+          capacity: number
+          id: string
+          pending: number
+          rejected: number
+          seats_taken: number
+          slug: string
+          status: string
+          title: string
+          total_count: number
+        }[]
+      }
+      admin_list_coupons: {
+        Args: { p_limit?: number; p_offset?: number; p_q?: string }
+        Returns: {
+          all_campaigns: boolean
+          applies_to_individual: boolean
+          applies_to_team: boolean
+          approved_uses: number
+          campaign_titles: string[]
+          code: string
+          discount_type: string
+          display_enabled: boolean
+          ends_at: string
+          id: string
+          individual_value_bdt: number
+          is_active: boolean
+          label: string
+          max_discount_bdt: number
+          max_redemptions: number
+          pending_uses: number
+          percent_off: number
+          starts_at: string
+          team_value_bdt: number
+          total_count: number
+        }[]
+      }
       admin_list_registrations: {
         Args: {
           p_campaign?: string
+          p_coupon?: string
           p_limit?: number
           p_offset?: number
           p_q?: string
@@ -392,12 +556,15 @@ export type Database = {
           campaign_id: string
           campaign_slug: string
           campaign_title: string
+          coupon_code: string
+          discount_bdt: number
           fee_bdt: number
           id: string
           lead_email: string
           lead_name: string
           member_count: number
           member_names: string[]
+          original_fee_bdt: number
           payment_method: string
           review_note: string
           reviewed_at: string
@@ -408,7 +575,32 @@ export type Database = {
           type: string
         }[]
       }
+      admin_overview_stats: {
+        Args: never
+        Returns: {
+          approved: number
+          pending: number
+          rejected: number
+          total: number
+        }[]
+      }
+      admin_save_coupon: {
+        Args: { p_id: string; p_payload: Json }
+        Returns: string
+      }
       campaign_is_full: { Args: { p_campaign_id: string }; Returns: boolean }
+      campaign_offers: {
+        Args: { p_campaign_ids: string[] }
+        Returns: {
+          campaign_id: string
+          code: string
+          discount: number
+          final_fee: number
+          message: string
+          original_fee: number
+          type: string
+        }[]
+      }
       campaign_stats: {
         Args: { p_campaign_id: string }
         Returns: {
@@ -418,6 +610,18 @@ export type Database = {
           rejected: number
           seats_taken: number
         }[]
+      }
+      coupon_discount: {
+        Args: {
+          p_base: number
+          p_coupon: Database["public"]["Tables"]["coupons"]["Row"]
+          p_type: string
+        }
+        Returns: number
+      }
+      coupon_is_live: {
+        Args: { p_coupon: Database["public"]["Tables"]["coupons"]["Row"] }
+        Returns: boolean
       }
       find_member_by_email: {
         Args: { p_email: string }
@@ -439,6 +643,29 @@ export type Database = {
         }[]
       }
       is_admin: { Args: { uid?: string }; Returns: boolean }
+      preview_coupon: {
+        Args: { p_campaign_id: string; p_code: string; p_type: string }
+        Returns: {
+          code: string
+          discount: number
+          final_fee: number
+          original_fee: number
+        }[]
+      }
+      quote_coupon: {
+        Args: {
+          p_base: number
+          p_campaign_id: string
+          p_code: string
+          p_lock?: boolean
+          p_type: string
+        }
+        Returns: {
+          code: string
+          coupon_id: string
+          discount: number
+        }[]
+      }
       review_registration: {
         Args: { p_action: string; p_note?: string; p_registration_id: string }
         Returns: string

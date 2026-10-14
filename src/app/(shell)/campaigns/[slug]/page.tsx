@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CalendarDays, GraduationCap, MapPin } from "lucide-react";
 import { campaignDateRange } from "@/components/campaigns/campaign-card";
+import { OfferNotes, OfferPrice } from "@/components/campaigns/offer";
 import { Button } from "@/components/ui/button";
 import { bdt } from "@/content/site";
 import {
@@ -12,6 +13,7 @@ import {
   isCampaignFull,
   registrationWindow,
 } from "@/lib/queries/campaigns";
+import { getCampaignOffers } from "@/lib/queries/coupons";
 import { PAYMENT_METHOD_LABEL, type PaymentMethod } from "@/lib/validation/registration";
 
 export async function generateMetadata({ params }: PageProps<"/campaigns/[slug]">): Promise<Metadata> {
@@ -31,7 +33,18 @@ export default async function CampaignPage({ params }: PageProps<"/campaigns/[sl
   if (!campaign) notFound();
 
   const window = registrationWindow(campaign);
-  const full = window.open ? await isCampaignFull(campaign.id) : false;
+  const [full, offers] = await Promise.all([
+    window.open ? isCampaignFull(campaign.id) : Promise.resolve(false),
+    getCampaignOffers([campaign.id]).then((all) => all[campaign.id]),
+  ]);
+  const offerRows = [
+    offers?.individual && campaign.individual_fee_bdt !== null
+      ? { label: "Individual registration", listed: campaign.individual_fee_bdt, offer: offers.individual }
+      : null,
+    offers?.team && campaign.team_fee_bdt !== null
+      ? { label: "Team registration", listed: campaign.team_fee_bdt, offer: offers.team }
+      : null,
+  ].filter((row) => row !== null);
   const highlights = campaignHighlights(campaign.highlights);
   const feeLines = campaignFeeLines(campaign.fee_lines);
   const numbers = campaignPaymentNumbers(campaign.payment_numbers);
@@ -78,20 +91,37 @@ export default async function CampaignPage({ params }: PageProps<"/campaigns/[sl
             </dl>
           )}
 
-          {feeLines.length > 0 && (
+          {(feeLines.length > 0 || offerRows.length > 0) && (
             <section className="mt-12">
               <h2 className="label text-muted">Registration fee</h2>
-              <ul className="mt-4 divide-y divide-line border-y border-line">
-                {feeLines.map((line) => (
-                  <li key={line.label} className="flex items-baseline justify-between gap-4 py-4">
-                    <span>
-                      <span className="block text-base text-fg">{line.label}</span>
-                      {line.note && <span className="mt-0.5 block text-sm text-muted">{line.note}</span>}
-                    </span>
-                    <span className="shrink-0 font-mono text-base text-fg">{bdt(line.amount)}</span>
-                  </li>
-                ))}
-              </ul>
+              {feeLines.length > 0 && (
+                <ul className="mt-4 divide-y divide-line border-y border-line">
+                  {feeLines.map((line) => (
+                    <li key={line.label} className="flex items-baseline justify-between gap-4 py-4">
+                      <span>
+                        <span className="block text-base text-fg">{line.label}</span>
+                        {line.note && <span className="mt-0.5 block text-sm text-muted">{line.note}</span>}
+                      </span>
+                      <span className="shrink-0 font-mono text-base text-fg">{bdt(line.amount)}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {offerRows.length > 0 && (
+                <div className="mt-4 rounded-2xl border border-accent/30 bg-accent/5 p-5">
+                  <h3 className="label-xs text-accent-ink">Offer</h3>
+                  <ul className="mt-2 divide-y divide-line">
+                    {offerRows.map((row) => (
+                      <li key={row.label} className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-3">
+                        <span className="text-base text-fg">{row.label}</span>
+                        <OfferPrice listed={row.listed} offer={row.offer} size="lg" />
+                      </li>
+                    ))}
+                  </ul>
+                  <OfferNotes offers={offers} className="mt-3" />
+                </div>
+              )}
             </section>
           )}
 

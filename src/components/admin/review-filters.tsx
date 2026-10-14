@@ -12,14 +12,16 @@ export function ReviewFilters({
   campaign,
   status,
   query,
+  coupon,
 }: {
   campaigns: { id: string; slug: string; title: string; status: string }[];
   campaign: string;
   status: string;
   query: string;
+  coupon: string;
 }) {
   return (
-    <form method="get" className="grid gap-3 sm:grid-cols-[1fr_auto_auto_auto] sm:items-end">
+    <form method="get" className="grid gap-3 sm:grid-cols-[1fr_auto_auto_auto_auto] sm:items-end">
       <div className="space-y-2">
         <label htmlFor="q" className="block text-sm font-medium text-fg">
           Search
@@ -63,6 +65,21 @@ export function ReviewFilters({
             </option>
           ))}
         </Select>
+      </div>
+
+      <div className="space-y-2">
+        <label htmlFor="coupon" className="block text-sm font-medium text-fg">
+          Coupon
+        </label>
+        <input
+          id="coupon"
+          name="coupon"
+          type="text"
+          defaultValue={coupon}
+          placeholder="Any"
+          autoComplete="off"
+          className={cn(inputClass, "font-mono uppercase sm:w-36")}
+        />
       </div>
 
       <button

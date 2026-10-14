@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { couponErrorMessage, isCouponError } from "@/lib/validation/coupon";
 import { dobSchema, emailSchema, phoneSchema } from "@/lib/validation/profile";
 
 /** Everything the registration wizard validates, plus the labels both it and the review pages read. */
@@ -104,6 +105,13 @@ export const submissionSchema = z
     }),
     heardFrom: z.enum(HEARD_FROM_VALUES).nullable().catch(null),
     heardFromOther: z.string().trim().max(120, "Keep this under 120 characters").default(""),
+    /** Checked and priced in Postgres; empty means no coupon. */
+    couponCode: z
+      .string()
+      .trim()
+      .toUpperCase()
+      .max(32, "That coupon code is not valid.")
+      .transform((v) => v || null),
   })
   .refine((v) => v.type !== "individual" || v.members.length === 1, {
     message: "An individual registration takes one participant",
@@ -161,6 +169,8 @@ export const draftSchema = z.object({
     .catch({ method: null, transactionId: "" }),
   heardFrom: z.enum(HEARD_FROM_VALUES).nullable().catch(null),
   heardFromOther: z.string().max(160).catch(""),
+  /** Only ever holds a code that was accepted on the payment step. */
+  couponCode: z.string().max(32).catch(""),
 });
 
 export type DraftValues = z.output<typeof draftSchema>;
@@ -196,6 +206,7 @@ export function emptyDraft(): DraftValues {
     payment: { method: null, transactionId: "" },
     heardFrom: null,
     heardFromOther: "",
+    couponCode: "",
   };
 }
 
@@ -233,6 +244,7 @@ const SUBMIT_ERROR: Record<string, string> = {
 
 export function submitErrorMessage(raw: string | undefined): string {
   const key = (raw ?? "").trim();
+  if (isCouponError(key)) return couponErrorMessage(key);
   return SUBMIT_ERROR[key] ?? "Could not submit this registration. Try again in a moment.";
 }
 

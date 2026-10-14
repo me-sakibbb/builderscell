@@ -1,4 +1,15 @@
-import { ClipboardList, Inbox, LayoutDashboard, Megaphone, UserRound, type LucideIcon } from "lucide-react";
+import {
+  ArrowLeft,
+  ClipboardList,
+  Gauge,
+  Inbox,
+  LayoutDashboard,
+  Megaphone,
+  ShieldCheck,
+  TicketPercent,
+  UserRound,
+  type LucideIcon,
+} from "lucide-react";
 
 /** One source of truth for the rail, shared by the fixed sidebar and the mobile drawer. */
 export type NavItem = {
@@ -16,7 +27,11 @@ export type NavGroup = {
   adminOnly?: boolean;
 };
 
-export const NAV_GROUPS: NavGroup[] = [
+/** Which area the frame is dressing. Passed as a name, since icons cannot cross from a
+ *  server layout into the client frame. */
+export type ShellVariant = "member" | "admin";
+
+const MEMBER_GROUPS: NavGroup[] = [
   {
     heading: "Workspace",
     items: [
@@ -29,11 +44,29 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     heading: "Admin",
     adminOnly: true,
-    items: [{ href: "/admin/registrations", label: "Registrations", icon: Inbox }],
+    items: [{ href: "/admin", label: "Admin panel", icon: ShieldCheck }],
   },
 ];
 
-export const visibleGroups = (isAdmin: boolean) => NAV_GROUPS.filter((g) => !g.adminOnly || isAdmin);
+const ADMIN_GROUPS: NavGroup[] = [
+  {
+    heading: "Admin",
+    items: [
+      { href: "/admin", label: "Overview", icon: Gauge, exact: true },
+      { href: "/admin/registrations", label: "Registrations", icon: Inbox },
+      { href: "/admin/coupons", label: "Coupons", icon: TicketPercent },
+    ],
+  },
+  {
+    heading: "Member area",
+    items: [{ href: "/dashboard", label: "Back to dashboard", icon: ArrowLeft, exact: true }],
+  },
+];
+
+const GROUPS: Record<ShellVariant, NavGroup[]> = { member: MEMBER_GROUPS, admin: ADMIN_GROUPS };
+
+export const visibleGroups = (variant: ShellVariant, isAdmin: boolean) =>
+  GROUPS[variant].filter((g) => !g.adminOnly || isAdmin);
 
 export function isActive(pathname: string, item: NavItem) {
   return item.exact ? pathname === item.href : pathname === item.href || pathname.startsWith(`${item.href}/`);

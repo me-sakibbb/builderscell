@@ -6,6 +6,7 @@ import { RegistrationSummary } from "@/components/registration/registration-summ
 import { RegistrationWizardView } from "@/components/registration/registration-wizard";
 import { Button } from "@/components/ui/button";
 import { campaignPaymentNumbers, getCampaignBySlug, isCampaignFull, registrationWindow } from "@/lib/queries/campaigns";
+import { getCampaignOffers } from "@/lib/queries/coupons";
 import { getCurrentUser, getRegistrationProfile } from "@/lib/queries/profile";
 import {
   draftFromProfile,
@@ -92,7 +93,10 @@ export default async function RegisterPage({ params, searchParams }: PageProps<"
     );
   }
 
-  const draftRow = await getDraftRegistration(user.id, campaign.id);
+  const [draftRow, offers] = await Promise.all([
+    getDraftRegistration(user.id, campaign.id),
+    getCampaignOffers([campaign.id]).then((all) => all[campaign.id]),
+  ]);
   const initialDraft = draftRow ? parseDraft(draftRow.draft) : draftFromProfile(profile, user.email ?? null);
 
   return (
@@ -107,6 +111,7 @@ export default async function RegisterPage({ params, searchParams }: PageProps<"
         <RegistrationWizardView
           campaign={campaign}
           paymentNumbers={campaignPaymentNumbers(campaign.payment_numbers)}
+          offers={offers}
           initialDraft={initialDraft}
           initialStep={draftRow?.step ?? 0}
           initialRegistrationId={draftRow?.id ?? null}

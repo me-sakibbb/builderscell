@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CampaignCard } from "@/components/campaigns/campaign-card";
 import { listCampaigns } from "@/lib/queries/campaigns";
+import { getCampaignOffers } from "@/lib/queries/coupons";
 import { requireMember } from "@/lib/queries/profile";
 
 export const metadata: Metadata = { title: "Dashboard | Builders' Cell" };
@@ -12,6 +13,7 @@ const PREVIEW_COUNT = 6;
 export default async function DashboardPage() {
   const { profile } = await requireMember();
   const { items, total } = await listCampaigns(1, PREVIEW_COUNT);
+  const offers = await getCampaignOffers(items.map((campaign) => campaign.id));
 
   const firstName = (profile.full_name ?? "").split(/\s+/)[0] || "builder";
 
@@ -36,7 +38,7 @@ export default async function DashboardPage() {
         ) : (
           <div className="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {items.map((campaign) => (
-              <CampaignCard key={campaign.id} campaign={campaign} />
+              <CampaignCard key={campaign.id} campaign={campaign} offers={offers[campaign.id]} />
             ))}
           </div>
         )}

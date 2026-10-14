@@ -1,22 +1,11 @@
-import { cookies } from "next/headers";
 import { ShellFrame } from "@/components/shell/frame";
-import { RAIL_COOKIE } from "@/components/shell/nav";
-import type { Member } from "@/components/shell/sidebar";
-import { getCurrentUser, getProfileWithInstitution, initialsFrom, isCurrentUserAdmin } from "@/lib/queries/profile";
+import { getShellContext } from "@/lib/queries/profile";
 
-/** Topbar and rail for every page but the landing one and the auth screens. The campaign
- *  pages are public, so this resolves a member when there is one and carries on when not. */
+/** Topbar and rail for every member page but the landing one, the auth screens and the
+ *  admin panel, which has its own frame. The campaign pages are public, so this carries
+ *  on without a member. */
 export default async function ShellLayout({ children }: LayoutProps<"/">) {
-  const user = await getCurrentUser();
-  const profile = user ? await getProfileWithInstitution(user.id) : null;
-  const isAdmin = user ? await isCurrentUserAdmin() : false;
-
-  const name = profile?.full_name ?? user?.email ?? "";
-  const member: Member | null = user
-    ? { name, email: profile?.email ?? user.email ?? "", initials: initialsFrom(name || "?") }
-    : null;
-
-  const collapsed = (await cookies()).get(RAIL_COOKIE)?.value === "1";
+  const { member, isAdmin, collapsed } = await getShellContext();
 
   return (
     <ShellFrame member={member} isAdmin={isAdmin} defaultCollapsed={collapsed}>

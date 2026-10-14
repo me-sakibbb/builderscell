@@ -1,5 +1,8 @@
 import { cache } from "react";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { RAIL_COOKIE } from "@/components/shell/nav";
+import type { Member } from "@/components/shell/sidebar";
 import { createClient } from "@/lib/supabase/server";
 import type { OnboardingValues } from "@/lib/validation/profile";
 
@@ -80,6 +83,23 @@ export function initialsFrom(value: string) {
     .slice(0, 2)
     .map((word) => word[0]?.toUpperCase() ?? "")
     .join("");
+}
+
+/** What the shell frame needs, shared by the member and admin layouts. Resolves a member
+ *  when there is one and carries on when not, since the campaign pages are public. */
+export async function getShellContext() {
+  const user = await getCurrentUser();
+  const profile = user ? await getProfileWithInstitution(user.id) : null;
+  const isAdmin = user ? await isCurrentUserAdmin() : false;
+
+  const name = profile?.full_name ?? user?.email ?? "";
+  const member: Member | null = user
+    ? { name, email: profile?.email ?? user.email ?? "", initials: initialsFrom(name || "?") }
+    : null;
+
+  const collapsed = (await cookies()).get(RAIL_COOKIE)?.value === "1";
+
+  return { user, member, isAdmin, collapsed };
 }
 
 /** Writes the sign-up details form and marks the profile complete. */

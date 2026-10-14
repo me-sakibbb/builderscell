@@ -1,9 +1,10 @@
 "use client";
 
+import { OfferNotes, OfferPrice } from "@/components/campaigns/offer";
 import { ChoiceCard } from "@/components/registration/choice";
+import { AmountDue, CouponField } from "@/components/registration/coupon-field";
 import { Field, FormError, inputClass } from "@/components/ui/field";
 import { Select } from "@/components/ui/select";
-import { bdt } from "@/content/site";
 import {
   HEARD_FROM_OPTIONS,
   PAYMENT_METHODS,
@@ -11,6 +12,7 @@ import {
   type PaymentMethod,
 } from "@/lib/validation/registration";
 import type { PaymentNumber } from "@/lib/queries/campaigns";
+import type { CampaignOffers } from "@/lib/validation/coupon";
 import type { RegistrationWizard } from "@/hooks/use-registration-wizard";
 import { cn } from "@/lib/cn";
 
@@ -21,6 +23,7 @@ export function TypeStep({
   allowsTeam,
   individualFee,
   teamFee,
+  offers,
   teamMin,
   teamMax,
 }: {
@@ -29,6 +32,7 @@ export function TypeStep({
   allowsTeam: boolean;
   individualFee: number | null;
   teamFee: number | null;
+  offers?: CampaignOffers;
   teamMin: number;
   teamMax: number;
 }) {
@@ -49,7 +53,7 @@ export function TypeStep({
             onSelect={() => wizard.setType("individual")}
             title="Individual"
             body="Just you, with your own Build Box."
-            aside={individualFee !== null ? bdt(individualFee) : undefined}
+            aside={individualFee !== null ? <OfferPrice listed={individualFee} offer={offers?.individual} /> : undefined}
           />
         )}
         {allowsTeam && (
@@ -58,10 +62,12 @@ export function TypeStep({
             onSelect={() => wizard.setType("team")}
             title="Team"
             body={`Up to ${teamMax} members, one shared Build Box.`}
-            aside={teamFee !== null ? bdt(teamFee) : undefined}
+            aside={teamFee !== null ? <OfferPrice listed={teamFee} offer={offers?.team} /> : undefined}
           />
         )}
       </div>
+
+      <OfferNotes offers={offers} />
 
       {wizard.errors.type && (
         <p role="alert" className="text-sm text-signal">
@@ -101,12 +107,10 @@ export function TypeStep({
 /** Step 2: the payment that has already been sent, plus where they heard about us. */
 export function PaymentStep({
   wizard,
-  fee,
   instructions,
   numbers,
 }: {
   wizard: RegistrationWizard;
-  fee: number | null;
   instructions: string | null;
   numbers: PaymentNumber[];
 }) {
@@ -117,12 +121,14 @@ export function PaymentStep({
       <header>
         <p className="label text-muted">Payment</p>
         <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">Confirm your payment</h2>
-        {fee !== null && (
-          <p className="mt-2 text-muted">
-            Amount for this registration: <span className="font-medium text-fg">{bdt(fee)}</span>
+        {wizard.listedFee !== null && (
+          <p className="mt-2 flex flex-wrap items-baseline gap-2 text-muted">
+            Amount for this registration: <AmountDue wizard={wizard} />
           </p>
         )}
       </header>
+
+      <CouponField wizard={wizard} />
 
       {(instructions || numbers.length > 0) && (
         <div className="rounded-2xl hairline bg-surface/60 p-5">

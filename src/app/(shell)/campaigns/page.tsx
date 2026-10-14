@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { CampaignCard } from "@/components/campaigns/campaign-card";
 import { Pagination } from "@/components/ui/pagination";
 import { listCampaigns } from "@/lib/queries/campaigns";
+import { getCampaignOffers } from "@/lib/queries/coupons";
 
 export const metadata: Metadata = {
   title: "Campaigns | Builders' Cell",
@@ -12,6 +13,7 @@ export default async function CampaignsPage({ searchParams }: PageProps<"/campai
   const params = await searchParams;
   const page = Number(Array.isArray(params.page) ? params.page[0] : params.page) || 1;
   const { items, page: current, pageCount, total } = await listCampaigns(page);
+  const offers = await getCampaignOffers(items.map((campaign) => campaign.id));
 
   return (
     <>
@@ -32,7 +34,7 @@ export default async function CampaignsPage({ searchParams }: PageProps<"/campai
         <>
           <div className="mt-14 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {items.map((campaign) => (
-              <CampaignCard key={campaign.id} campaign={campaign} />
+              <CampaignCard key={campaign.id} campaign={campaign} offers={offers[campaign.id]} />
             ))}
           </div>
 

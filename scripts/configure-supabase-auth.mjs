@@ -50,7 +50,10 @@ const codeEmail = (heading, lead) => `
 
 const payload = {
   site_url: SITE_URL,
-  uri_allow_list: `${SITE_URL}/**,https://builderscell.vercel.app/**`,
+  // Every origin the OAuth callback may return to. Supabase sends anything else to SITE_URL.
+  uri_allow_list: [...new Set([SITE_URL, "http://localhost:3000", "https://builderscell.vercel.app"])]
+    .map((origin) => `${origin}/**`)
+    .join(","),
   mailer_otp_length: 6,
   mailer_otp_exp: 600,
   mailer_autoconfirm: false,
@@ -111,6 +114,7 @@ const c = await res.json();
 
 console.log("Applied:", {
   site_url: c.site_url,
+  redirects: c.uri_allow_list,
   otp: `${c.mailer_otp_length} digits / ${c.mailer_otp_exp}s`,
   password_min_length: c.password_min_length,
   smtp: c.smtp_host ? `${c.smtp_host}:${c.smtp_port} as ${c.smtp_admin_email}` : "built-in (cannot send codes)",

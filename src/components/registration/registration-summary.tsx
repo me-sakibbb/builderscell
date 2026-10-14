@@ -65,6 +65,23 @@ export function RegistrationSummary({
             label="Type"
             value={registration.type === "team" ? `Team of ${registration.member_count}` : "Individual"}
           />
+          {registration.coupon_code && (
+            <>
+              <Row
+                label="Listed fee"
+                value={registration.original_fee_bdt !== null ? bdt(registration.original_fee_bdt) : ""}
+              />
+              <Row
+                label="Coupon"
+                value={
+                  <span>
+                    <span className="font-mono">{registration.coupon_code}</span>
+                    <span className="text-muted"> · −{bdt(registration.discount_bdt ?? 0)}</span>
+                  </span>
+                }
+              />
+            </>
+          )}
           <Row label="Amount" value={registration.fee_bdt !== null ? bdt(registration.fee_bdt) : ""} />
           <Row
             label="Method"

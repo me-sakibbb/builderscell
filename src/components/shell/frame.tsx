@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogIn, Menu, PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
-import { RAIL_WIDTH } from "@/components/shell/nav";
+import { RAIL_WIDTH, type ShellVariant } from "@/components/shell/nav";
 import { Sidebar, type Member } from "@/components/shell/sidebar";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Wordmark } from "@/components/ui/wordmark";
@@ -14,14 +14,32 @@ import { cn } from "@/lib/cn";
 type Props = {
   member: Member | null;
   isAdmin: boolean;
+  /** The member area and the admin panel share this frame; only the rail and a tag differ. */
+  variant?: ShellVariant;
   defaultCollapsed: boolean;
   children: React.ReactNode;
 };
 
+/** Marks the admin panel beside the wordmark, so it is never mistaken for the member area. */
+function Brand({ variant }: { variant: ShellVariant }) {
+  return (
+    <span className="flex items-center gap-2.5">
+      <Link href="/" className="text-xl" aria-label="Builders' Cell home">
+        <Wordmark />
+      </Link>
+      {variant === "admin" && (
+        <span className="inline-flex h-6 items-center rounded-full border border-accent bg-accent/10 px-2.5 label-xs text-accent-ink">
+          Admin
+        </span>
+      )}
+    </span>
+  );
+}
+
 /** The topbar keeps the brand and the theme switch; the rail below owns navigation and the
  *  account cluster. Below `lg` the rail folds into a drawer, so the topbar carries a menu
  *  button and a way through to the account for as long as the rail is out of reach. */
-export function ShellFrame({ member, isAdmin, defaultCollapsed, children }: Props) {
+export function ShellFrame({ member, isAdmin, variant = "member", defaultCollapsed, children }: Props) {
   const pathname = usePathname();
   const { collapsed, toggle } = useRail(defaultCollapsed);
 
@@ -67,9 +85,7 @@ export function ShellFrame({ member, isAdmin, defaultCollapsed, children }: Prop
           )}
         </button>
 
-        <Link href="/" className="text-xl" aria-label="Builders' Cell home">
-          <Wordmark />
-        </Link>
+        <Brand variant={variant} />
 
         <div className="ml-auto flex items-center gap-2">
           <ThemeToggle />
@@ -95,7 +111,7 @@ export function ShellFrame({ member, isAdmin, defaultCollapsed, children }: Prop
       </header>
 
       <aside className="fixed inset-y-0 top-16 left-0 z-30 hidden w-(--rail-w) border-r border-line bg-bg-elev transition-[width] duration-300 ease-out-expo motion-reduce:transition-none lg:block">
-        <Sidebar member={member} isAdmin={isAdmin} collapsed={collapsed} />
+        <Sidebar member={member} isAdmin={isAdmin} variant={variant} collapsed={collapsed} />
       </aside>
 
       <div
@@ -119,9 +135,7 @@ export function ShellFrame({ member, isAdmin, defaultCollapsed, children }: Prop
           )}
         >
           <div className="flex h-16 shrink-0 items-center justify-between border-b border-line px-5">
-            <Link href="/" className="text-xl" aria-label="Builders' Cell home">
-              <Wordmark />
-            </Link>
+            <Brand variant={variant} />
             <button
               type="button"
               onClick={() => setOpenedOn(null)}
@@ -132,7 +146,13 @@ export function ShellFrame({ member, isAdmin, defaultCollapsed, children }: Prop
             </button>
           </div>
           <div className="min-h-0 flex-1">
-            <Sidebar member={member} isAdmin={isAdmin} collapsed={false} onNavigate={() => setOpenedOn(null)} />
+            <Sidebar
+              member={member}
+              isAdmin={isAdmin}
+              variant={variant}
+              collapsed={false}
+              onNavigate={() => setOpenedOn(null)}
+            />
           </div>
         </div>
       </div>

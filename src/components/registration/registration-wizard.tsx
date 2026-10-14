@@ -8,6 +8,7 @@ import { ReviewStep } from "@/components/registration/review-step";
 import { FormError } from "@/components/ui/field";
 import { useRegistrationWizard } from "@/hooks/use-registration-wizard";
 import type { Campaign, PaymentNumber } from "@/lib/queries/campaigns";
+import type { CampaignOffers } from "@/lib/validation/coupon";
 import type { DraftValues } from "@/lib/validation/registration";
 import { cn } from "@/lib/cn";
 
@@ -26,6 +27,7 @@ type Props = {
     | "payment_instructions"
   >;
   paymentNumbers: PaymentNumber[];
+  offers?: CampaignOffers;
   initialDraft: DraftValues;
   initialStep: number;
   initialRegistrationId: string | null;
@@ -52,6 +54,7 @@ function SaveIndicator({ state }: { state: "idle" | "saving" | "saved" | "error"
 export function RegistrationWizardView({
   campaign,
   paymentNumbers,
+  offers,
   initialDraft,
   initialStep,
   initialRegistrationId,
@@ -67,6 +70,8 @@ export function RegistrationWizardView({
     teamMax: campaign.team_max_members,
     minClassLevel: campaign.min_class_level,
     maxClassLevel: campaign.max_class_level,
+    individualFee: campaign.individual_fee_bdt,
+    teamFee: campaign.team_fee_bdt,
   });
 
   const top = useRef<HTMLDivElement>(null);
@@ -79,9 +84,6 @@ export function RegistrationWizardView({
     }
     top.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [wizard.step]);
-
-  const fee =
-    wizard.draft.type === "team" ? campaign.team_fee_bdt : wizard.draft.type === "individual" ? campaign.individual_fee_bdt : null;
 
   const isLast = wizard.current.kind === "review";
 
@@ -129,6 +131,7 @@ export function RegistrationWizardView({
           allowsTeam={campaign.allows_team}
           individualFee={campaign.individual_fee_bdt}
           teamFee={campaign.team_fee_bdt}
+          offers={offers}
           teamMin={campaign.team_min_members}
           teamMax={campaign.team_max_members}
         />
@@ -144,15 +147,10 @@ export function RegistrationWizardView({
       )}
 
       {wizard.current.kind === "payment" && (
-        <PaymentStep
-          wizard={wizard}
-          fee={fee}
-          instructions={campaign.payment_instructions}
-          numbers={paymentNumbers}
-        />
+        <PaymentStep wizard={wizard} instructions={campaign.payment_instructions} numbers={paymentNumbers} />
       )}
 
-      {wizard.current.kind === "review" && <ReviewStep wizard={wizard} fee={fee} />}
+      {wizard.current.kind === "review" && <ReviewStep wizard={wizard} />}
 
       {wizard.current.kind !== "review" && <FormError>{wizard.formError}</FormError>}
 

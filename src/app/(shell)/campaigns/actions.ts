@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/lib/queries/profile";
 import { lookupMemberByEmail, saveDraft, submitRegistration } from "@/lib/queries/registrations";
 import { getCampaignBySlug, registrationWindow } from "@/lib/queries/campaigns";
+import { previewCoupon, type CouponQuote } from "@/lib/queries/coupons";
+import { couponErrorMessage, isCouponError } from "@/lib/validation/coupon";
 import { emailSchema } from "@/lib/validation/profile";
 import {
   draftSchema,
@@ -126,6 +128,33 @@ export async function lookupMemberAction(email: string): Promise<MemberLookupRes
   };
 }
 
+export type CouponPreviewResult = { quote?: CouponQuote; error?: string };
+
+/** Prices a coupon on the payment step, before the member sends any money. */
+export async function previewCouponAction(input: {
+  campaignSlug: string;
+  type: string | null;
+  code: string;
+}): Promise<CouponPreviewResult> {
+  const user = await getCurrentUser();
+  if (!user) return { error: "Your session expired. Sign in again." };
+
+  const code = input.code.trim().toUpperCase();
+  if (!code) return { error: "Enter a coupon code." };
+  if (code.length > 32) return { error: couponErrorMessage("coupon_not_found") };
+  if (input.type !== "individual" && input.type !== "team") return { error: "Pick how you are registering first." };
+
+  const campaign = await getCampaignBySlug(input.campaignSlug);
+  if (!campaign) return { error: "This campaign is no longer available." };
+
+  const window = registrationWindow(campaign);
+  if (!window.open) return { error: window.reason ?? "Registration is closed." };
+
+  const { quote, error } = await previewCoupon({ campaignId: campaign.id, type: input.type, code });
+  if (error || !quote) return { error: couponErrorMessage(error) };
+  return { quote };
+}
+
 /** Validates the finished wizard and hands it to the database. */
 export async function submitRegistrationAction(input: {
   campaignSlug: string;
@@ -170,6 +199,7 @@ export async function submitRegistrationAction(input: {
     payment: { method: draft.payment.method, transactionId: draft.payment.transactionId },
     heardFrom: draft.heardFrom,
     heardFromOther: draft.heardFromOther,
+    couponCode: draft.couponCode,
   });
 
   if (!parsed.success) {
@@ -196,6 +226,8 @@ export async function submitRegistrationAction(input: {
   }
 
   const { error } = await submitRegistration(registrationId, parsed.data);
+  // The coupon may have been switched off or used up since it was applied.
+  if (error && isCouponError(error)) return { fieldErrors: { couponCode: couponErrorMessage(error) } };
   if (error) return { error: submitErrorMessage(error) };
 
   revalidatePath(`/campaigns/${campaign.slug}/register`);

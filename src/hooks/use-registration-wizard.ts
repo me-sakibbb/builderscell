@@ -4,9 +4,11 @@ import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from
 import { useRouter } from "next/navigation";
 import {
   lookupMemberAction,
+  previewCouponAction,
   saveDraftAction,
   submitRegistrationAction,
 } from "@/app/(shell)/campaigns/actions";
+import type { CouponQuote } from "@/lib/queries/coupons";
 import { emptyMember, memberSchema, type DraftMember, type DraftValues } from "@/lib/validation/registration";
 
 const AUTOSAVE_MS = 900;
@@ -24,7 +26,12 @@ export type WizardOptions = {
   teamMax: number;
   minClassLevel: number | null;
   maxClassLevel: number | null;
+  individualFee: number | null;
+  teamFee: number | null;
 };
+
+/** A quote is only good for the registration type it was priced for. */
+type AppliedCoupon = CouponQuote & { type: "individual" | "team" };
 
 type Step = { kind: "type" } | { kind: "member"; index: number } | { kind: "payment" } | { kind: "review" };
 
@@ -47,6 +54,10 @@ export function useRegistrationWizard(options: WizardOptions) {
   const [lookupErrors, setLookupErrors] = useState<Record<number, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [submitting, startSubmit] = useTransition();
+  const [couponInput, setCouponInput] = useState(options.initialDraft.couponCode);
+  const [applied, setApplied] = useState<AppliedCoupon | null>(null);
+  const [couponError, setCouponError] = useState("");
+  const [couponBusy, setCouponBusy] = useState(false);
 
   const memberCount = draft.type === "team" ? clampCount(draft.memberCount, options.teamMin, options.teamMax) : 1;
 
@@ -106,6 +117,113 @@ export function useRegistrationWizard(options: WizardOptions) {
   const patchDraft = useCallback((patch: Partial<DraftValues>) => {
     setDraft((prev) => ({ ...prev, ...patch }));
   }, []);
+
+  // Coupon. The draft only ever stores a code Postgres accepted; the price shown comes
+  // from the last quote, and only while it was priced for the current registration type.
+  const listedFee =
+    draft.type === "team" ? options.teamFee : draft.type === "individual" ? options.individualFee : null;
+  const coupon = applied && applied.type === draft.type && applied.code === draft.couponCode ? applied : null;
+  const fee = coupon ? coupon.finalFee : listedFee;
+  const couponChecking = couponBusy || (Boolean(draft.couponCode) && Boolean(draft.type) && !coupon);
+
+  const quoteRequest = useRef(0);
+
+  const requestQuote = useCallback(
+    async (code: string, type: "individual" | "team") => {
+      const request = ++quoteRequest.current;
+      const result = await previewCouponAction({ campaignSlug: options.campaignSlug, type, code });
+      // A newer request (or a removal) has superseded this one.
+      if (request !== quoteRequest.current) return null;
+      return result;
+    },
+    [options.campaignSlug],
+  );
+
+  const applyCoupon = useCallback(async () => {
+    const code = couponInput.trim().toUpperCase();
+    setCouponError("");
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next.couponCode;
+      return next;
+    });
+
+    if (!code) {
+      setCouponError("Enter a coupon code.");
+      return;
+    }
+    if (!draft.type) {
+      setCouponError("Pick how you are registering first.");
+      return;
+    }
+
+    setCouponBusy(true);
+    const result = await requestQuote(code, draft.type);
+    setCouponBusy(false);
+    if (!result) return;
+
+    if (result.error || !result.quote) {
+      setApplied(null);
+      setCouponError(result.error ?? "That coupon code is not valid.");
+      patchDraft({ couponCode: "" });
+      return;
+    }
+
+    setApplied({ ...result.quote, type: draft.type });
+    setCouponInput(result.quote.code);
+    patchDraft({ couponCode: result.quote.code });
+  }, [couponInput, draft.type, patchDraft, requestQuote]);
+
+  const changeCouponInput = useCallback((value: string) => {
+    setCouponInput(value.toUpperCase());
+    setCouponError("");
+    setErrors((prev) => {
+      if (!prev.couponCode) return prev;
+      const next = { ...prev };
+      delete next.couponCode;
+      return next;
+    });
+  }, []);
+
+  const removeCoupon = useCallback(() => {
+    quoteRequest.current += 1;
+    setCouponBusy(false);
+    setApplied(null);
+    setCouponInput("");
+    setCouponError("");
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next.couponCode;
+      return next;
+    });
+    patchDraft({ couponCode: "" });
+  }, [patchDraft]);
+
+  // Re-price a saved code when the draft is reopened or the registration type changes.
+  // If it no longer applies, it comes off and the member is told why.
+  const requoteTarget = draft.couponCode && draft.type ? `${draft.type}:${draft.couponCode}` : null;
+  const appliedKey = applied ? `${applied.type}:${applied.code}` : null;
+
+  useEffect(() => {
+    if (!requoteTarget || requoteTarget === appliedKey) return;
+    const [type, code] = requoteTarget.split(":") as ["individual" | "team", string];
+
+    let cancelled = false;
+    void requestQuote(code, type).then((result) => {
+      if (cancelled || !result) return;
+      if (result.error || !result.quote) {
+        setApplied(null);
+        setCouponError(`${code} was removed: ${result.error ?? "it no longer applies."}`);
+        patchDraft({ couponCode: "" });
+        return;
+      }
+      setApplied({ ...result.quote, type });
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [appliedKey, patchDraft, requestQuote, requoteTarget]);
 
   const setType = useCallback(
     (type: "individual" | "team") => {
@@ -266,13 +384,19 @@ export function useRegistrationWizard(options: WizardOptions) {
         if (draft.heardFrom === "other" && draft.heardFromOther.trim().length < 2) {
           next.heardFromOther = "Tell us where you heard about us";
         }
+        // A typed but unapplied code would leave the member unsure what they owe.
+        if (couponChecking) {
+          next.couponCode = "Wait a moment while the coupon is checked";
+        } else if (couponInput.trim() && couponInput.trim().toUpperCase() !== draft.couponCode) {
+          next.couponCode = "Apply this coupon, or clear the field";
+        }
         setErrors((prev) => ({ ...prev, ...next }));
         return Object.keys(next).length === 0;
       }
 
       return true;
     },
-    [draft.heardFrom, draft.heardFromOther, draft.payment, draft.type, validateMember],
+    [couponChecking, couponInput, draft.couponCode, draft.heardFrom, draft.heardFromOther, draft.payment, draft.type, validateMember],
   );
 
   const goTo = useCallback(
@@ -312,9 +436,19 @@ export function useRegistrationWizard(options: WizardOptions) {
         setErrors(result.fieldErrors);
         const first = Object.keys(result.fieldErrors)[0] ?? "";
         const memberMatch = /^members\.(\d+)\./.exec(first);
+
+        // The coupon stopped applying after it was quoted: take it off so the price shown
+        // is the one that would now be charged.
+        if (first === "couponCode") {
+          quoteRequest.current += 1;
+          setApplied(null);
+          patchDraft({ couponCode: "" });
+        }
+
         if (memberMatch) goTo(Number(memberMatch[1]) + 1);
-        else if (first.startsWith("payment") || first.startsWith("heardFrom")) goTo(steps.length - 2);
-        else setFormError("Check the highlighted fields and try again.");
+        else if (first.startsWith("payment") || first.startsWith("heardFrom") || first === "couponCode") {
+          goTo(steps.length - 2);
+        } else setFormError("Check the highlighted fields and try again.");
         return;
       }
 
@@ -326,7 +460,7 @@ export function useRegistrationWizard(options: WizardOptions) {
       setSubmitted(true);
       router.refresh();
     });
-  }, [goTo, options.campaignSlug, router, steps, validateStep]);
+  }, [goTo, options.campaignSlug, patchDraft, router, steps, validateStep]);
 
   return {
     draft,
@@ -342,6 +476,15 @@ export function useRegistrationWizard(options: WizardOptions) {
     submitted,
     lookupBusy,
     lookupErrors,
+    listedFee,
+    fee,
+    coupon,
+    couponInput,
+    couponChecking,
+    couponError: errors.couponCode || couponError,
+    changeCouponInput,
+    applyCoupon,
+    removeCoupon,
     setType,
     setMemberCount,
     updateMember,

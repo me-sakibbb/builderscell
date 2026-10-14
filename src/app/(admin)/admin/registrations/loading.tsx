@@ -7,8 +7,8 @@ export default function AdminRegistrationsLoading() {
       <Skeleton className="h-10 w-64" />
       <Skeleton className="mt-3 h-5 w-48" />
 
-      <div className="mt-8 grid gap-3 sm:grid-cols-[1fr_auto_auto_auto]">
-        {[0, 1, 2, 3].map((field) => (
+      <div className="mt-8 grid gap-3 sm:grid-cols-[1fr_auto_auto_auto_auto]">
+        {[0, 1, 2, 3, 4].map((field) => (
           <Skeleton key={field} className="h-12 w-full rounded-xl sm:w-44" />
         ))}
       </div>

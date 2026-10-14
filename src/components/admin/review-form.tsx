@@ -2,7 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { Check, Loader2, X } from "lucide-react";
-import { reviewRegistrationAction, type ReviewState } from "@/app/(shell)/admin/actions";
+import { reviewRegistrationAction, type ReviewState } from "@/app/(admin)/admin/actions";
 import { FormError, inputClass } from "@/components/ui/field";
 import { cn } from "@/lib/cn";
 

@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { LogIn, LogOut } from "lucide-react";
 import { motion } from "motion/react";
 import { signOut } from "@/app/auth/actions";
-import { isActive, visibleGroups, type NavItem } from "@/components/shell/nav";
+import { isActive, visibleGroups, type NavItem, type ShellVariant } from "@/components/shell/nav";
 import { useReducedMotion } from "@/hooks/use-media";
 import { cn } from "@/lib/cn";
 
@@ -131,13 +131,14 @@ function Account({ member, collapsed, onNavigate }: Shared & { member: Member | 
 type Props = Shared & {
   member: Member | null;
   isAdmin: boolean;
+  variant: ShellVariant;
 };
 
 /** The rail's contents, rendered twice: fixed beside the page, and inside the mobile
  *  drawer. The moving pill is scoped by `useId`, so the two copies never fight over it. */
-export function Sidebar({ member, isAdmin, collapsed, onNavigate }: Props) {
+export function Sidebar({ member, isAdmin, variant, collapsed, onNavigate }: Props) {
   const pillId = useId();
-  const groups = visibleGroups(isAdmin);
+  const groups = visibleGroups(variant, isAdmin);
 
   return (
     <div className="flex h-full flex-col">

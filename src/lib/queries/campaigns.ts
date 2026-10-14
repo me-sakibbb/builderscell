@@ -26,6 +26,14 @@ export type CampaignCard = Pick<
 
 export const CAMPAIGNS_PAGE_SIZE = 9;
 
+/** Drafts only ever show up to admins. */
+export const CAMPAIGN_STATUS_LABEL: Record<string, string> = {
+  draft: "Draft",
+  open: "Registration open",
+  closed: "Registration closed",
+  archived: "Finished",
+};
+
 const CARD_COLUMNS =
   "id, slug, title, kind, status, eyebrow, summary, location, starts_on, ends_on, registration_closes_at, allows_individual, allows_team, individual_fee_bdt, team_fee_bdt";
 

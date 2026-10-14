@@ -204,6 +204,8 @@ export async function listRegistrationsForReview(params: {
   campaignId: string | null;
   status: string | null;
   query: string;
+  /** Coupon code, matched exactly and case-insensitively. */
+  coupon?: string;
   page: number;
   pageSize?: number;
 }) {
@@ -214,6 +216,7 @@ export async function listRegistrationsForReview(params: {
   const { data, error } = await supabase.rpc("admin_list_registrations", {
     p_campaign: params.campaignId ?? undefined,
     p_status: params.status ?? undefined,
+    p_coupon: params.coupon || undefined,
     p_q: params.query,
     p_limit: pageSize,
     p_offset: (current - 1) * pageSize,
