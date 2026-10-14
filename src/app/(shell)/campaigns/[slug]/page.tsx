@@ -17,10 +17,10 @@ import { PAYMENT_METHOD_LABEL, type PaymentMethod } from "@/lib/validation/regis
 export async function generateMetadata({ params }: PageProps<"/campaigns/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const campaign = await getCampaignBySlug(slug);
-  if (!campaign) return { title: "Campaign | Builder'sCell" };
+  if (!campaign) return { title: "Campaign | Builders' Cell" };
 
   return {
-    title: `${campaign.title} | Builder'sCell`,
+    title: `${campaign.title} | Builders' Cell`,
     description: campaign.summary,
   };
 }

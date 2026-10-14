@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { initialsFrom, requireMember } from "@/lib/queries/profile";
 import { INSTITUTION_TYPE_LABEL } from "@/lib/validation/profile";
 
-export const metadata: Metadata = { title: "Your profile | Builder'sCell" };
+export const metadata: Metadata = { title: "Your profile | Builders' Cell" };
 
 const date = new Intl.DateTimeFormat("en-GB", {
   day: "2-digit",

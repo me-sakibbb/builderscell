@@ -11,6 +11,13 @@ export const INSTITUTION_TYPE_LABEL: Record<string, string> = {
 
 export const emailSchema = z.email("Enter a valid email address").trim().toLowerCase();
 
+/** Not trimmed: spaces are legal password characters. 72 is bcrypt's input limit. */
+export const PASSWORD_MIN = 8;
+export const passwordSchema = z
+  .string()
+  .min(PASSWORD_MIN, `Use at least ${PASSWORD_MIN} characters`)
+  .max(72, "Use at most 72 characters");
+
 export const otpSchema = z
   .string()
   .trim()

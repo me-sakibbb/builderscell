@@ -57,7 +57,7 @@ export function Nav() {
               : "max-w-7xl border border-transparent py-3 pr-2 pl-4",
           )}
         >
-          <a href="#top" className="text-xl" aria-label="Builder's Cell home">
+          <a href="#top" className="text-xl" aria-label="Builders' Cell home">
             <Wordmark />
           </a>
           <ul className="hidden items-center gap-1 lg:flex">

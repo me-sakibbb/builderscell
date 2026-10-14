@@ -3,7 +3,7 @@ import Link from "next/link";
 import { MyRegistrations } from "@/components/registration/my-registrations";
 import { requireMember } from "@/lib/queries/profile";
 
-export const metadata: Metadata = { title: "Your registrations | Builder'sCell" };
+export const metadata: Metadata = { title: "Your registrations | Builders' Cell" };
 
 export default async function RegistrationsPage({ searchParams }: PageProps<"/dashboard/registrations">) {
   const params = await searchParams;

@@ -6,7 +6,7 @@ import { ReviewForm } from "@/components/admin/review-form";
 import { RegistrationSummary } from "@/components/registration/registration-summary";
 import { getRegistrationWithMembers } from "@/lib/queries/registrations";
 
-export const metadata: Metadata = { title: "Review registration | Builder'sCell admin" };
+export const metadata: Metadata = { title: "Review registration | Builders' Cell admin" };
 
 const dateTime = new Intl.DateTimeFormat("en-GB", {
   day: "2-digit",

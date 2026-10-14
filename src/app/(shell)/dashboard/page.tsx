@@ -4,7 +4,7 @@ import { CampaignCard } from "@/components/campaigns/campaign-card";
 import { listCampaigns } from "@/lib/queries/campaigns";
 import { requireMember } from "@/lib/queries/profile";
 
-export const metadata: Metadata = { title: "Dashboard | Builder'sCell" };
+export const metadata: Metadata = { title: "Dashboard | Builders' Cell" };
 
 /** A preview only. The full, paginated list lives at /campaigns. */
 const PREVIEW_COUNT = 6;

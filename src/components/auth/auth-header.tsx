@@ -6,7 +6,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 export function AuthHeader() {
   return (
     <header className="flex items-center justify-between px-4 py-4 sm:px-8">
-      <Link href="/" className="text-xl" aria-label="Builder's Cell home">
+      <Link href="/" className="text-xl" aria-label="Builders' Cell home">
         <Wordmark />
       </Link>
       <ThemeToggle />

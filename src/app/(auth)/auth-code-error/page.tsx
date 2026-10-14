@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AuthCard } from "@/components/auth/auth-card";
 
-export const metadata: Metadata = { title: "Sign-in failed | Builder'sCell" };
+export const metadata: Metadata = { title: "Sign-in failed | Builders' Cell" };
 
 export default function AuthCodeErrorPage() {
   return (

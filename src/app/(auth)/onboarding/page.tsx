@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getOnboardingState } from "@/lib/queries/profile";
 import { safeNext } from "@/lib/auth";
 
-export const metadata: Metadata = { title: "Finish signing up | Builder'sCell" };
+export const metadata: Metadata = { title: "Finish signing up | Builders' Cell" };
 
 export default async function OnboardingPage(props: PageProps<"/onboarding">) {
   const { next } = await props.searchParams;

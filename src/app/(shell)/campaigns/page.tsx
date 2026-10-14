@@ -4,8 +4,8 @@ import { Pagination } from "@/components/ui/pagination";
 import { listCampaigns } from "@/lib/queries/campaigns";
 
 export const metadata: Metadata = {
-  title: "Campaigns | Builder'sCell",
-  description: "Bootcamps, workshops and competitions you can register for at Builder'sCell.",
+  title: "Campaigns | Builders' Cell",
+  description: "Bootcamps, workshops and competitions you can register for at Builders' Cell.",
 };
 
 export default async function CampaignsPage({ searchParams }: PageProps<"/campaigns">) {
@@ -19,7 +19,7 @@ export default async function CampaignsPage({ searchParams }: PageProps<"/campai
         <p className="eyebrow">Campaigns</p>
         <h1 className="display mt-6 text-[clamp(2.4rem,6vw,4.5rem)]">Everything you can join</h1>
         <p className="mt-5 text-lg text-muted">
-          Bootcamps, workshops and competitions run by Builder&apos;sCell. Pick one to see what it covers and how to
+          Bootcamps, workshops and competitions run by Builders&apos; Cell. Pick one to see what it covers and how to
           register.
         </p>
       </header>

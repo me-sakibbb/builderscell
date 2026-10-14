@@ -44,7 +44,7 @@ export function Footer() {
         </details>
 
         <div className="flex flex-wrap items-center justify-between gap-4 border-t border-line py-6 text-xs text-muted">
-          <span>© {new Date().getFullYear()} Builder&apos;s Cell</span>
+          <span>© {new Date().getFullYear()} Builders&apos; Cell</span>
           <span>Made in Bangladesh</span>
         </div>
       </div>

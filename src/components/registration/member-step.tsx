@@ -52,7 +52,7 @@ export function MemberStep({ wizard, index, minClassLevel, maxClassLevel }: Prop
         <p className="mt-2 text-muted">
           {isLead
             ? "Pre-filled from your profile. Correct anything that has changed."
-            : "Add this member by their Builder'sCell email, or type their details in."}
+            : "Add this member by their Builders' Cell email, or type their details in."}
         </p>
       </header>
 
@@ -80,7 +80,7 @@ export function MemberStep({ wizard, index, minClassLevel, maxClassLevel }: Prop
           ) : (
             <div className="space-y-2">
               <label htmlFor={`lookup-${index}`} className="block text-sm font-medium text-fg">
-                Already a Builder&apos;sCell member?
+                Already a Builders&apos; Cell member?
               </label>
               <div className="flex flex-wrap items-stretch gap-2">
                 <input

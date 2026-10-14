@@ -15,7 +15,7 @@ import {
 } from "@/lib/queries/registrations";
 import { parseDraft } from "@/lib/validation/registration";
 
-export const metadata: Metadata = { title: "Register | Builder'sCell" };
+export const metadata: Metadata = { title: "Register | Builders' Cell" };
 
 /** The wizard reads better narrow than the shell's full content width. */
 function Shell({ children }: { children: React.ReactNode }) {

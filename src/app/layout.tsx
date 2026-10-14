@@ -18,7 +18,7 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Builder'sCell | Robotics community in Bangladesh",
+  title: "Builders' Cell | Robotics community in Bangladesh",
   description:
     "Robotics bootcamp, a nine-month robotics lab and a genuine-parts shop. Bangladesh's robotics revolution starts in one room.",
 };

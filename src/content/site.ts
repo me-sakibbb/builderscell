@@ -20,7 +20,7 @@ export const nav = {
 export const hero = {
   title: "Bangladesh's robotics revolution starts in one room.",
   sub: "Pick up a kit. Make something move in four sessions. Spend nine months turning that first spark into a portfolio.",
-  primary: { label: "Join Builder'sCell", href: "/signup" },
+  primary: { label: "Join Builders' Bootcamp", href: "/signup" },
   /** Swapped in for members, who have no use for the sign-up form. */
   primaryMember: { label: "Your dashboard", href: "/dashboard" },
   secondary: { label: "Get your kit", href: "#kit" },
@@ -37,7 +37,7 @@ export const hero = {
 
 export const numbers = [
   { value: 4, pad: 2, label: "Bootcamp sessions to your first moving build" },
-  { value: 9, pad: 2, label: "Months in the Cell, from beginner to portfolio-ready" },
+  { value: 4, pad: 2, label: "Fun builds" },
   { value: 3, pad: 2, label: "Friends can split one kit" },
 ];
 
@@ -137,7 +137,7 @@ export const playground = {
 };
 
 export const bootcamp = {
-  eyebrow: "Builder's Bootcamp",
+  eyebrow: "Builders' Bootcamp",
   title: "Four sessions. Your first real build.",
   body: "The Bootcamp is where parts in a box become a working machine. It's your first real taste of robotics, and an honest way to find out whether you want the full nine months.",
   sessions: [

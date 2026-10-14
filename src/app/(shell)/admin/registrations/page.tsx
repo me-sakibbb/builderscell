@@ -7,7 +7,7 @@ import { bdt } from "@/content/site";
 import { getCampaignStats, listCampaignOptions } from "@/lib/queries/campaigns";
 import { listRegistrationsForReview } from "@/lib/queries/registrations";
 
-export const metadata: Metadata = { title: "Registrations | Builder'sCell admin" };
+export const metadata: Metadata = { title: "Registrations | Builders' Cell admin" };
 
 const dateTime = new Intl.DateTimeFormat("en-GB", {
   day: "2-digit",

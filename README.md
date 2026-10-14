@@ -1,6 +1,6 @@
-# Builder's Cell
+# Builders' Cell
 
-Landing page for Builder's Cell, a robotics community in Bangladesh (bootcamp, nine-month lab, parts shop).
+Landing page for Builders' Cell, a robotics community in Bangladesh (bootcamp, nine-month lab, parts shop).
 
 ```bash
 npm install
@@ -32,8 +32,9 @@ npm run build
 Supabase Auth. Two ways in, one account per email address (Supabase links the identities when the
 Google address is verified):
 
-- **Email** — `signInWithOtp` mails a 6-digit code, `verifyOtp` exchanges it for a session.
-  `/signup` creates users, `/login` refuses unknown addresses.
+- **Email and password** — `/signup` calls `signUp`, which mails a 6-digit code; `verifyOtp`
+  confirms the address and starts the session. `/login` is `signInWithPassword`.
+  `/forgot-password` mails a recovery code, then verifies it and sets the new password in one step.
 - **Google** — PKCE round trip through `/auth/callback`.
 
 Either way, a first-time user lands on `/onboarding` to give their name, institution, date of birth
@@ -59,7 +60,7 @@ Email goes out over Brevo SMTP, which is not optional: Supabase's built-in sende
 2 messages/hour and its free-tier templates cannot be edited, so it can only send a magic link,
 never a 6-digit code. Sign-in emails are therefore sent from a Brevo verified sender, with the code
 in a themed template (`scripts/configure-supabase-auth.mjs` holds both). Deliverability note: the
-sender is a gmail.com address, which cannot be DKIM-signed for our domain — move it to a Builder's
+sender is a gmail.com address, which cannot be DKIM-signed for our domain — move it to a Builders'
 Cell domain when one exists, or expect a share of mail to land in spam.
 
 ## How the 3D works

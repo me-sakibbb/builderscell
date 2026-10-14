@@ -67,7 +67,7 @@ export function ShellFrame({ member, isAdmin, defaultCollapsed, children }: Prop
           )}
         </button>
 
-        <Link href="/" className="text-xl" aria-label="Builder's Cell home">
+        <Link href="/" className="text-xl" aria-label="Builders' Cell home">
           <Wordmark />
         </Link>
 
@@ -119,7 +119,7 @@ export function ShellFrame({ member, isAdmin, defaultCollapsed, children }: Prop
           )}
         >
           <div className="flex h-16 shrink-0 items-center justify-between border-b border-line px-5">
-            <Link href="/" className="text-xl" aria-label="Builder's Cell home">
+            <Link href="/" className="text-xl" aria-label="Builders' Cell home">
               <Wordmark />
             </Link>
             <button

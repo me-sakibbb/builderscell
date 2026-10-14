@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AuthCard, OrDivider } from "@/components/auth/auth-card";
 import { GoogleButton } from "@/components/auth/google-button";
-import { OtpForm } from "@/components/auth/otp-form";
+import { SignupForm } from "@/components/auth/signup-form";
 import { safeNext } from "@/lib/auth";
 
-export const metadata: Metadata = { title: "Create an account | Builder'sCell" };
+export const metadata: Metadata = { title: "Create an account | Builders' Cell" };
 
 export default async function SignupPage(props: PageProps<"/signup">) {
   const { next } = await props.searchParams;
@@ -15,7 +15,7 @@ export default async function SignupPage(props: PageProps<"/signup">) {
     <AuthCard
       eyebrow="Join the cell"
       title="Create your account"
-      lead="We'll send a 6-digit code to your email. Details come next."
+      lead="Pick a password, then confirm your email with a 6-digit code. Details come next."
       footer={
         <>
           Already have an account?{" "}
@@ -25,7 +25,7 @@ export default async function SignupPage(props: PageProps<"/signup">) {
         </>
       }
     >
-      <OtpForm intent="signup" next={target} />
+      <SignupForm next={target} />
       <OrDivider />
       <GoogleButton next={target} label="Sign up with Google" />
     </AuthCard>

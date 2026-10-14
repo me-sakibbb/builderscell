@@ -84,7 +84,7 @@ export async function lookupMemberAction(email: string): Promise<MemberLookupRes
 
   const { member, error } = await lookupMemberByEmail(parsed.data);
   if (error) return { error: "Could not look that member up. Try again in a moment." };
-  if (!member) return { error: "No Builder'sCell member uses that email address." };
+  if (!member) return { error: "No Builders' Cell member uses that email address." };
   if (member.user_id === user.id) return { error: "That is your own account: you are already participant 1." };
 
   const locked = (

@@ -1,13 +1,17 @@
 /**
- * Applies the Builder's Cell auth settings to a Supabase project: 6-digit OTP codes,
+ * Applies the Builders' Cell auth settings to a Supabase project: passwords (8+ characters),
+ * 6-digit codes for confirming sign-ups and resetting passwords,
  * themed sign-in emails, SMTP, and the Google provider. Idempotent - re-run any time.
  *
  *   SUPABASE_ACCESS_TOKEN=sbp_...      # required, personal access token
  *   SMTP_HOST=smtp-relay.brevo.com SMTP_PORT=587 SMTP_USER=... SMTP_PASS=... \
- *   SMTP_SENDER=you@example.com SMTP_SENDER_NAME="Builder's Cell" \
+ *   SMTP_SENDER=you@example.com SMTP_SENDER_NAME="Builders' Cell" \
  *   GOOGLE_CLIENT_ID=... GOOGLE_CLIENT_SECRET=... \
  *   SITE_URL=http://localhost:3000 \
  *   node scripts/configure-supabase-auth.mjs
+ *
+ * SMTP already set on the project and only the templates changed? Skip the SMTP_* variables and
+ * pass TEMPLATES_ONLY=1 instead.
  *
  * Custom SMTP is not optional: Supabase's built-in sender cannot deliver a code
  * (its free-tier templates are link-only and cannot be edited) and is capped at 2/hour.
@@ -23,7 +27,7 @@ const codeEmail = (heading, lead) => `
   <tr><td align="center">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border:1px solid rgba(10,12,14,0.09);border-radius:20px;">
       <tr><td style="padding:36px 36px 8px 36px;">
-        <div style="font-size:15px;font-weight:600;letter-spacing:-0.01em;color:#0b0d0e;">Builder<span style="color:#00b86b;">'</span>sCell</div>
+        <div style="font-size:15px;font-weight:600;letter-spacing:-0.01em;color:#0b0d0e;">Builders<span style="color:#00b86b;">'</span> Cell</div>
       </td></tr>
       <tr><td style="padding:16px 36px 0 36px;">
         <h1 style="margin:0;font-size:26px;line-height:1.2;font-weight:600;letter-spacing:-0.02em;color:#0b0d0e;">${heading}</h1>
@@ -38,7 +42,7 @@ const codeEmail = (heading, lead) => `
       <tr><td style="padding:24px 36px 36px 36px;">
         <hr style="border:none;border-top:1px solid rgba(10,12,14,0.09);margin:0 0 16px 0;" />
         <p style="margin:0;font-size:12px;line-height:1.6;color:#5a6269;">If you didn't ask for this, you can ignore this email &mdash; nobody can get in without the code.</p>
-        <p style="margin:10px 0 0 0;font-size:12px;color:#5a6269;">Builder's Cell &middot; Bangladesh's robotics revolution starts in one room.</p>
+        <p style="margin:10px 0 0 0;font-size:12px;color:#5a6269;">Builders' Cell &middot; Bangladesh's robotics revolution starts in one room.</p>
       </td></tr>
     </table>
   </td></tr>
@@ -50,6 +54,7 @@ const payload = {
   mailer_otp_length: 6,
   mailer_otp_exp: 600,
   mailer_autoconfirm: false,
+  password_min_length: 8,
 };
 
 if (process.env.SMTP_HOST) {
@@ -59,19 +64,30 @@ if (process.env.SMTP_HOST) {
     smtp_user: process.env.SMTP_USER,
     smtp_pass: process.env.SMTP_PASS,
     smtp_admin_email: process.env.SMTP_SENDER,
-    smtp_sender_name: process.env.SMTP_SENDER_NAME ?? "Builder's Cell",
+    smtp_sender_name: process.env.SMTP_SENDER_NAME ?? "Builders' Cell",
     smtp_max_frequency: 20,
     rate_limit_email_sent: Number(process.env.EMAIL_RATE_LIMIT ?? 30),
-    // Template editing is rejected while the project still uses the built-in sender.
-    mailer_subjects_confirmation: "{{ .Token }} is your Builder's Cell code",
-    mailer_subjects_magic_link: "{{ .Token }} is your Builder's Cell code",
+  });
+}
+
+// Template editing is rejected while the project still uses the built-in sender, so these
+// apply once custom SMTP is set, either in this run or already on the project.
+if (process.env.SMTP_HOST || process.env.TEMPLATES_ONLY) {
+  Object.assign(payload, {
+    mailer_subjects_confirmation: "{{ .Token }} is your Builders' Cell code",
+    mailer_subjects_magic_link: "{{ .Token }} is your Builders' Cell code",
     mailer_templates_confirmation_content: codeEmail(
       "Confirm your email",
-      "Welcome to Builder's Cell. Enter this code on the sign-up screen to confirm your email address.",
+      "Welcome to Builders' Cell. Enter this code on the sign-up screen to confirm your email address.",
     ),
     mailer_templates_magic_link_content: codeEmail(
       "Your sign-in code",
-      "Enter this code on the Builder's Cell sign-in screen to continue.",
+      "Enter this code on the Builders' Cell sign-in screen to continue.",
+    ),
+    mailer_subjects_recovery: "{{ .Token }} is your Builders' Cell reset code",
+    mailer_templates_recovery_content: codeEmail(
+      "Reset your password",
+      "Enter this code on the Builders' Cell reset screen, then pick a new password.",
     ),
   });
 }
@@ -96,8 +112,10 @@ const c = await res.json();
 console.log("Applied:", {
   site_url: c.site_url,
   otp: `${c.mailer_otp_length} digits / ${c.mailer_otp_exp}s`,
+  password_min_length: c.password_min_length,
   smtp: c.smtp_host ? `${c.smtp_host}:${c.smtp_port} as ${c.smtp_admin_email}` : "built-in (cannot send codes)",
   emails_per_hour: c.rate_limit_email_sent,
-  code_in_template: c.mailer_templates_magic_link_content.includes("{{ .Token }}"),
+  code_in_template: c.mailer_templates_confirmation_content.includes("{{ .Token }}"),
+  code_in_recovery: c.mailer_templates_recovery_content.includes("{{ .Token }}"),
   google: c.external_google_enabled,
 });
