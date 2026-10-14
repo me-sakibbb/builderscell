@@ -145,9 +145,10 @@ export function Hero() {
               <Button href={primary.href} size="lg">
                 {primary.label}
               </Button>
+              {/* Temporarily hidden: "Get your kit".
               <Button href={hero.secondary.href} size="lg" variant="ghost" arrow={false}>
                 {hero.secondary.label}
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>

@@ -1,12 +1,13 @@
 "use client";
 
 import { useRef } from "react";
-import { ArrowUpRight } from "lucide-react";
+// import { ArrowUpRight } from "lucide-react";
 import { join } from "@/content/site";
 import { Button } from "@/components/ui/button";
 import { gsap, MOTION_OK, useGSAP } from "@/lib/gsap";
 
-const fmt = new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", timeZone: "UTC" });
+// Used by the Inspire Sessions list, which is temporarily hidden.
+// const fmt = new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", timeZone: "UTC" });
 
 export function Join() {
   const root = useRef<HTMLElement>(null);
@@ -51,14 +52,19 @@ export function Join() {
           {join.body}
         </p>
         <div data-reveal className="mt-10 flex flex-wrap justify-center gap-3">
+          <Button href={join.bootcamp.href} size="lg">
+            {join.bootcamp.label}
+          </Button>
+          {/* Temporarily hidden until the kit and the Cell are live.
           <Button href={join.primary.href} size="lg">
             {join.primary.label}
           </Button>
           <Button href={join.secondary.href} size="lg" variant="ghost" arrow={false}>
             {join.secondary.label}
-          </Button>
+          </Button> */}
         </div>
 
+        {/* Temporarily hidden: Upcoming Inspire Sessions.
         <div data-reveal className="mx-auto mt-24 max-w-3xl text-left">
           <div className="mb-4 flex items-baseline justify-between">
             <h3 className="label text-muted">Upcoming Inspire Sessions</h3>
@@ -79,7 +85,7 @@ export function Join() {
               </li>
             ))}
           </ul>
-        </div>
+        </div> */}
       </div>
     </section>
   );

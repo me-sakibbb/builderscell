@@ -9,10 +9,11 @@ export const nav = {
   links: [
     { label: "Bootcamp", href: "#bootcamp" },
     { label: "Campaigns", href: "/campaigns" },
-    { label: "The Cell", href: "#cell" },
-    { label: "Shop", href: "#shop" },
+    // Temporarily hidden along with their sections.
+    // { label: "The Cell", href: "#cell" },
+    // { label: "Shop", href: "#shop" },
     { label: "Mentors", href: "#mentors" },
-    { label: "For Teams", href: "#teams" },
+    // { label: "For Teams", href: "#teams" },
   ],
   cta: { label: "Register", href: "/campaigns" },
 };
@@ -238,6 +239,8 @@ export const join = {
   eyebrow: "Join",
   title: "Nine months from now, you won't be the same builder.",
   body: "The room is open, and we're still building it, one Cell member at a time.",
+  /** Temporary single CTA while the kit and the Cell buttons below are hidden. */
+  bootcamp: { label: "Join Builders' Bootcamp", href: "/campaigns/builders-bootcamp" },
   primary: { label: "Get your kit", href: "#kit" },
   secondary: { label: "Visit the Cell", href: "#cell" },
   // DUMMY Inspire Session dates and venues
@@ -260,8 +263,8 @@ export const footer = {
     {
       title: "Contact",
       items: [
-        { label: "hello@builderscell.com", href: "#" },
-        { label: "+880 1XXX-XXXXXX", href: "#" },
+        { label: "tech.builderscell@gmail.com", href: "mailto:tech.builderscell@gmail.com" },
+        { label: "+880 1577-727793", href: "tel:+8801577727793" },
       ],
     },
     {
