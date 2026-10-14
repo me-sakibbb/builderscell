@@ -36,6 +36,28 @@ export const hero = {
   },
 };
 
+/** The outreach event the landing page is collecting leads for. `event` is the
+ *  lead_events slug in the database; leads are tagged with it. */
+export const fest = {
+  event: "mdic-stem-fest-2026",
+  eyebrow: "Meet us at the fest",
+  title: "Builders' Cell is coming to Manarat STEM Fest.",
+  body: "Two days of ideas and technological challenges at MDIC, hosted by Manarat Science Club. Leave your details and we'll reach out about the Builders' Bootcamp.",
+  details: [
+    { k: "Event", v: "Manarat STEM Fest 2026-27" },
+    { k: "When", v: "16 Oct, 08:00 to 17 Oct, 16:00" },
+    { k: "Where", v: "MDIC Campus, Road 104, Plot 16, Dhaka" },
+    { k: "Host", v: "Manarat Science Club" },
+  ],
+  form: {
+    title: "Stay in the loop",
+    submit: "Send my details",
+    note: "We only use these details to contact you about Builders' Cell.",
+    success: "Thanks! We've got your details and will be in touch soon.",
+    again: "Add another student",
+  },
+};
+
 export const numbers = [
   { value: 4, pad: 2, label: "Bootcamp sessions to your first moving build" },
   { value: 4, pad: 2, label: "Fun builds" },

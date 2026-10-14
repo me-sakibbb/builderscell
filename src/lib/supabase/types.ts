@@ -253,6 +253,102 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_events: {
+        Row: {
+          created_at: string
+          ends_at: string | null
+          id: string
+          is_open: boolean
+          slug: string
+          starts_at: string | null
+          title: string
+          updated_at: string
+          venue: string | null
+        }
+        Insert: {
+          created_at?: string
+          ends_at?: string | null
+          id?: string
+          is_open?: boolean
+          slug: string
+          starts_at?: string | null
+          title: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Update: {
+          created_at?: string
+          ends_at?: string | null
+          id?: string
+          is_open?: boolean
+          slug?: string
+          starts_at?: string | null
+          title?: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Relationships: []
+      }
+      leads: {
+        Row: {
+          contacted_at: string | null
+          contacted_by: string | null
+          created_at: string
+          email: string
+          event_id: string
+          full_name: string
+          grade: string
+          id: string
+          institution_id: string | null
+          institution_other: string | null
+          phone: string
+          updated_at: string
+        }
+        Insert: {
+          contacted_at?: string | null
+          contacted_by?: string | null
+          created_at?: string
+          email: string
+          event_id: string
+          full_name: string
+          grade: string
+          id?: string
+          institution_id?: string | null
+          institution_other?: string | null
+          phone: string
+          updated_at?: string
+        }
+        Update: {
+          contacted_at?: string | null
+          contacted_by?: string | null
+          created_at?: string
+          email?: string
+          event_id?: string
+          full_name?: string
+          grade?: string
+          id?: string
+          institution_id?: string | null
+          institution_other?: string | null
+          phone?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "lead_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           address: string | null
@@ -543,6 +639,38 @@ export type Database = {
           total_count: number
         }[]
       }
+      admin_list_lead_events: {
+        Args: never
+        Returns: {
+          id: string
+          is_open: boolean
+          lead_count: number
+          slug: string
+          title: string
+        }[]
+      }
+      admin_list_leads: {
+        Args: {
+          p_contacted?: string
+          p_event?: string
+          p_limit?: number
+          p_offset?: number
+          p_q?: string
+        }
+        Returns: {
+          contacted_at: string
+          created_at: string
+          email: string
+          event_id: string
+          event_title: string
+          full_name: string
+          grade: string
+          id: string
+          institution_name: string
+          phone: string
+          total_count: number
+        }[]
+      }
       admin_list_registrations: {
         Args: {
           p_campaign?: string
@@ -587,6 +715,10 @@ export type Database = {
       admin_save_coupon: {
         Args: { p_id: string; p_payload: Json }
         Returns: string
+      }
+      admin_set_lead_contacted: {
+        Args: { p_contacted: boolean; p_id: string }
+        Returns: undefined
       }
       campaign_is_full: { Args: { p_campaign_id: string }; Returns: boolean }
       campaign_offers: {
@@ -690,6 +822,18 @@ export type Database = {
           isOneToOne: false
           isSetofReturn: true
         }
+      }
+      submit_lead: {
+        Args: {
+          p_email: string
+          p_event: string
+          p_full_name: string
+          p_grade: string
+          p_institution_id: string
+          p_institution_other: string
+          p_phone: string
+        }
+        Returns: undefined
       }
       submit_registration: {
         Args: { p_payload: Json; p_registration_id: string }

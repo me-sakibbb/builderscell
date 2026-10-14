@@ -1,6 +1,7 @@
 import { Nav } from "@/components/sections/nav";
 import { Loader } from "@/components/sections/loader";
 import { Hero } from "@/components/sections/hero";
+import { Fest } from "@/components/sections/fest";
 import { Numbers } from "@/components/sections/numbers";
 import { Myths } from "@/components/sections/myths";
 // Temporarily hidden: Journey, Cell, Shop, Teams. Restore the imports and JSX below to bring them back.
@@ -26,6 +27,7 @@ export default function Home() {
       <Nav />
       <main>
         <Hero />
+        <Fest />
         <Numbers />
         <Myths />
         {/* Bootcamp temporarily takes Journey's slot; it originally sat after Playground. */}

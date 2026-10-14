@@ -1,6 +1,7 @@
 import {
   ArrowLeft,
   ClipboardList,
+  Contact,
   Gauge,
   Inbox,
   LayoutDashboard,
@@ -55,6 +56,7 @@ const ADMIN_GROUPS: NavGroup[] = [
       { href: "/admin", label: "Overview", icon: Gauge, exact: true },
       { href: "/admin/registrations", label: "Registrations", icon: Inbox },
       { href: "/admin/coupons", label: "Coupons", icon: TicketPercent },
+      { href: "/admin/leads", label: "Leads", icon: Contact },
     ],
   },
   {
