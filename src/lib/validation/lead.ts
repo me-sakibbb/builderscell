@@ -5,6 +5,11 @@ import { emailSchema, phoneSchema } from "@/lib/validation/profile";
  *  database checks the same rules again in submit_lead(). */
 
 export const LEAD_GRADES = [
+  "class_1",
+  "class_2",
+  "class_3",
+  "class_4",
+  "class_5",
   "class_6",
   "class_7",
   "class_8",
@@ -19,6 +24,11 @@ export const LEAD_GRADES = [
 export type LeadGrade = (typeof LEAD_GRADES)[number];
 
 export const LEAD_GRADE_LABEL: Record<LeadGrade, string> = {
+  class_1: "Class 1",
+  class_2: "Class 2",
+  class_3: "Class 3",
+  class_4: "Class 4",
+  class_5: "Class 5",
   class_6: "Class 6",
   class_7: "Class 7",
   class_8: "Class 8",
